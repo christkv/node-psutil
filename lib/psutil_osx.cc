@@ -67,6 +67,11 @@ Handle<Value> PSUtil::New(const Arguments &args)
 {
   HandleScope scope;
 
+  PSUtil *psUtil = new PSUtil();
+  psUtil->Wrap(args.This());
+  return args.This();
+
+
   // // Check that we have an array
   // if(args.Length() == 1 && args[0]->IsArray())
   // {

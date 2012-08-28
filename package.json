@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git://github.com/christkv/node-psutil.git"
   },
+  "devDependencies": {
+    "nodenuit": "latest"
+  },
   "engines" : { "node" : ">=0.6.0" },
   "author": "Christian Kvalheim",
   "license": "Apache",
