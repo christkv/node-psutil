@@ -70,9 +70,11 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
 Handle<Value> PSUtilLib::IoStat(const Arguments& args) {
   HandleScope scope;
 
-  // If we don't have 2 arguments throw an error
-  if(args.Length() != 1) return VException("function requires a callback function");
-  if(!args[0]->IsFunction()) return VException("function requires a callback function");
+  // Legal modes
+  if(!((args.Length() == 1 && args[0]->IsFunction())
+    || (args.Length() == 2 && args[0]->IsBoolean() && args[1]->IsFunction()))) {
+    VException("function requires [boolea, function] or [function]");
+  }
 
   // There's no ToFunction(), use a Cast instead.
   Local<Function> callback = Local<Function>::Cast(args[0]);
@@ -82,6 +84,9 @@ Handle<Value> PSUtilLib::IoStat(const Arguments& args) {
   worker->error = false;
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);
+
+  // Get the value of results being returned
+  worker->prDisk = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
 
   // Trigger the work
   uv_queue_work(uv_default_loop(),
@@ -96,6 +101,9 @@ Handle<Value> PSUtilLib::IoStat(const Arguments& args) {
 void PSUtilLib::Process(uv_work_t* work_req) {
   // Grab the worker
   Worker *worker = static_cast<Worker*>(work_req->data);
+
+  // Execute the worker code
+  worker->execute();
 }
 
 void PSUtilLib::After(uv_work_t* work_req) {
@@ -104,10 +112,8 @@ void PSUtilLib::After(uv_work_t* work_req) {
 
   Worker *worker = static_cast<Worker*>(work_req->data);
 
-  // Local<Integer> avail_out = Integer::New(100);
-  // Local<Integer> avail_in = Integer::New(200);
-  Local<Value> args[2] = { Integer::New(0), Integer::New(0) };
-
+  // Set up the callback with a null first
+  Local<Value> args[2] = { Local<Value>::New(Null()), Integer::New(0) };
 
   // Wrap the callback function call in a TryCatch so that we can call
   // node's FatalException afterwards. This makes it possible to catch
@@ -120,16 +126,6 @@ void PSUtilLib::After(uv_work_t* work_req) {
   if (try_catch.HasCaught()) {
     node::FatalException(try_catch);
   }
-
-  // PSUtilLib *psUtilLib = container_of(work_req, PSUtilLib, work_req_);
-  // PSUtilLib *psUtilLib = static_cast<PSUtilLib*>(work_req->data);
-
-  // Local<Integer> avail_out = Integer::New(100);
-  // Local<Integer> avail_in = Integer::New(200);
-  // Local<Value> args[2] = { avail_in, avail_out };
-
-  // MakeCallback(psUtilLib->handle_, callback_sym, ARRAY_SIZE(args), args);
-  // psUtilLib->Unref();
 }
 
 // Create a new instance of BSON and passing it the existing context
