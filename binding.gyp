@@ -1,8 +1,8 @@
 {
   'targets': [
     {
-      'target_name': 'psutil_osx',
-      'sources': [ 'lib/psutil_osx.cc' ],
+      'target_name': 'psutil_lib_osx',
+      'sources': [ 'lib/psutil_lib_osx.cc' ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
       'conditions': [

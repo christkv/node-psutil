@@ -1,4 +1,4 @@
-var PSUtil = require('../build/Release/psutil_osx').PSUtil;
+var PSUtil = require('../lib/psutil').PSUtil;
 
 console.dir();
 
@@ -12,6 +12,12 @@ exports.tearDown = function(callback) {
 
 exports['Should correctly retrieve iostats of the system'] = function(test) {
   var psUtil = new PSUtil();
-  console.dir(psUtil)
-  test.done();
+  psUtil.iostat(function(err, result) {
+    console.log("========================================= err")
+    console.dir(err)
+    console.dir(result)
+    test.done();
+  })
+
+  // test.done();
 }
