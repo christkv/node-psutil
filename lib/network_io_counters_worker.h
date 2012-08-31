@@ -190,7 +190,7 @@ class NetworkIOCountersWorker : public Worker {
     NetworkIOCountersWorker() {}
     ~NetworkIOCountersWorker() {}
 
-    bool prDisk;
+    bool prNic;
     vector<DiskCounters*> results;
 
     void inline execute()
