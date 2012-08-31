@@ -26,15 +26,16 @@
 #include <vector>
 
 #include "psutil_lib_osx.h"
+#include "iostat_worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
 #endif
 
-using namespace v8;
+// using namespace v8;
 using namespace node;
 
-static Handle<Value> VException(const char *msg)
+static v8::Handle<Value> VException(const char *msg)
 {
   HandleScope scope;
   return ThrowException(Exception::Error(String::New(msg)));
@@ -71,13 +72,18 @@ Handle<Value> PSUtilLib::IoStat(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(!((args.Length() == 1 && args[0]->IsFunction())
-    || (args.Length() == 2 && args[0]->IsBoolean() && args[1]->IsFunction()))) {
-    VException("function requires [boolea, function] or [function]");
-  }
+  if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 1");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
 
-  // There's no ToFunction(), use a Cast instead.
-  Local<Function> callback = Local<Function>::Cast(args[0]);
+  // Get the callback
+  Local<Function> callback;
+
+  // If we have a single parameter
+  if(args.Length() == 1) {
+    callback = Local<Function>::Cast(args[0]);
+  } else {
+    callback = Local<Function>::Cast(args[1]);
+  }
 
   // Create a worker object and map the information
   IoStatWorker *worker = new IoStatWorker();
@@ -112,8 +118,11 @@ void PSUtilLib::After(uv_work_t* work_req) {
 
   Worker *worker = static_cast<Worker*>(work_req->data);
 
+  // Map the data
+  Local<Object> result = worker->map();
+
   // Set up the callback with a null first
-  Local<Value> args[2] = { Local<Value>::New(Null()), Integer::New(0) };
+  Local<Value> args[2] = { Local<Value>::New(Null()), result };
 
   // Wrap the callback function call in a TryCatch so that we can call
   // node's FatalException afterwards. This makes it possible to catch
