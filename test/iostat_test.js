@@ -13,17 +13,22 @@ exports.tearDown = function(callback) {
 exports['Should correctly retrieve io counters of the system'] = function(test) {
   var psUtil = new PSUtil();
   psUtil.disk_io_counters(function(err, result) {
-    console.log("========================================= results 1")
-    console.dir(err)
-    console.dir(result)
+    test.equal('number', typeof result.read_count);
+    test.equal('number', typeof result.write_count);
+    test.equal('number', typeof result.read_bytes);
+    test.equal('number', typeof result.write_bytes);
+    test.equal('number', typeof result.read_time);
+    test.equal('number', typeof result.write_time);
 
-    psUtil.disk_io_counters(true, function(err, result) {
-      console.log("========================================= results 2")
-      console.dir(err)
-      console.dir(result)
+    psUtil.disk_io_counters(true, function(err, results) {
+      var result = results[Object.keys(results)[0]];
+      test.equal('number', typeof result.read_count);
+      test.equal('number', typeof result.write_count);
+      test.equal('number', typeof result.read_bytes);
+      test.equal('number', typeof result.write_bytes);
+      test.equal('number', typeof result.read_time);
+      test.equal('number', typeof result.write_time);
       test.done();
-    })
-  })
-
-  // test.done();
+    });
+  });
 }
