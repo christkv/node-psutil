@@ -1,7 +1,5 @@
 var PSUtil = require('../lib/psutil').PSUtil;
 
-console.dir();
-
 exports.setUp = function(callback) {
   callback();
 }

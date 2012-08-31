@@ -71,7 +71,7 @@ class NetworkIOCountersWorker : public Worker {
       buf = (char *)malloc(len * sizeof(char));
       if(buf == NULL) {
         this->error = true;
-        this->error_message = "could not allocate memory";
+        this->error_message = (char *)"could not allocate memory";
         return;
       }
 

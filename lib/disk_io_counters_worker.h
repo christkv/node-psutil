@@ -57,7 +57,7 @@ class DiskIOCountersWorker : public Worker {
       if(IOServiceGetMatchingServices(kIOMasterPortDefault, IOServiceMatching(kIOMediaClass), &disk_list) != kIOReturnSuccess)
       {
         this->error = true;
-        this->error_message = "Unable to get the list of disks.";
+        this->error_message = (char *)"Unable to get the list of disks.";
         return;
       }
 
@@ -66,7 +66,7 @@ class DiskIOCountersWorker : public Worker {
       {
         if(IORegistryEntryGetParentEntry(disk, kIOServicePlane, &parent) != kIOReturnSuccess) {
           this->error = true;
-          this->error_message = "Unable to get the disk's parent.";
+          this->error_message = (char *)"Unable to get the disk's parent.";
           // Release resources
           IOObjectRelease(disk);
           return;
@@ -76,7 +76,7 @@ class DiskIOCountersWorker : public Worker {
           if(IORegistryEntryCreateCFProperties(disk, (CFMutableDictionaryRef *) &parent_dict, kCFAllocatorDefault, kNilOptions) != kIOReturnSuccess)
           {
               this->error = true;
-              this->error_message = "Unable to get the parent's properties.";
+              this->error_message = (char *)"Unable to get the parent's properties.";
               // Release resources
               IOObjectRelease(disk);
               IOObjectRelease(parent);
@@ -86,7 +86,7 @@ class DiskIOCountersWorker : public Worker {
           if (IORegistryEntryCreateCFProperties(parent, (CFMutableDictionaryRef *) &props_dict, kCFAllocatorDefault, kNilOptions) != kIOReturnSuccess)
           {
               this->error = true;
-              this->error_message = "Unable to get the disk properties.";
+              this->error_message = (char *)"Unable to get the disk properties.";
               // Release resources
               CFRelease(props_dict);
               IOObjectRelease(disk);
@@ -107,7 +107,7 @@ class DiskIOCountersWorker : public Worker {
           // If get no statistics error out
           if(stats_dict == NULL) {
             this->error = true;
-            this->error_message = "Unable to get disk stats.";
+            this->error_message = (char *)"Unable to get disk stats.";
             return;
           }
 

@@ -152,27 +152,45 @@ void PSUtilLib::Process(uv_work_t* work_req) {
 
 void PSUtilLib::After(uv_work_t* work_req) {
   // Grab the scope of the call from Node
-  HandleScope scope;
+  v8::HandleScope scope;
 
+  // Get the worker reference
   Worker *worker = static_cast<Worker*>(work_req->data);
 
-  // Map the data
-  Local<Object> result = worker->map();
+  // If we have an error
+  if(worker->error) {
+    v8::Local<v8::Value> err = v8::Exception::Error(v8::String::New(worker->error_message));
+    v8::Local<v8::Value> args[2] = { err };
+    // Execute the error
+    v8::TryCatch try_catch;
+    // Call the callback
+    worker->callback->Call(v8::Context::GetCurrent()->Global(), ARRAY_SIZE(args), args);
+    // If we have an exception handle it as a fatalexception
+    if (try_catch.HasCaught()) {
+      node::FatalException(try_catch);
+    }
+  } else {
+    // Map the data
+    v8::Local<v8::Object> result = worker->map();
 
-  // Set up the callback with a null first
-  Local<Value> args[2] = { Local<Value>::New(Null()), result };
-
-  // Wrap the callback function call in a TryCatch so that we can call
-  // node's FatalException afterwards. This makes it possible to catch
-  // the exception from JavaScript land using the
-  // process.on('uncaughtException') event.
-  TryCatch try_catch;
-  // Call the callback
-  worker->callback->Call(Context::GetCurrent()->Global(), ARRAY_SIZE(args), args);
-  // If we have an exception handle it as a fatalexception
-  if (try_catch.HasCaught()) {
-    node::FatalException(try_catch);
+    // Set up the callback with a null first
+    v8::Local<v8::Value> args[2] = { v8::Local<v8::Value>::New(v8::Null()), result };
+    // Wrap the callback function call in a TryCatch so that we can call
+    // node's FatalException afterwards. This makes it possible to catch
+    // the exception from JavaScript land using the
+    // process.on('uncaughtException') event.
+    v8::TryCatch try_catch;
+    // Call the callback
+    worker->callback->Call(v8::Context::GetCurrent()->Global(), ARRAY_SIZE(args), args);
+    // If we have an exception handle it as a fatalexception
+    if (try_catch.HasCaught()) {
+      node::FatalException(try_catch);
+    }
   }
+
+  // Clean up the memory
+  worker->callback.Dispose();
+  delete worker;
 }
 
 // Create a new instance of BSON and passing it the existing context
