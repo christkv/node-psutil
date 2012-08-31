@@ -4,11 +4,18 @@
 #include <v8.h>
 #include <vector>
 
-#include <CoreFoundation/CoreFoundation.h>
-#include <IOKit/IOKitLib.h>
-#include <IOKit/storage/IOBlockStorageDriver.h>
-#include <IOKit/storage/IOMedia.h>
-#include <IOKit/IOBSD.h>
+#ifdef TARGET_OS_MAC
+  #include <CoreFoundation/CoreFoundation.h>
+  #include <IOKit/IOKitLib.h>
+  #include <IOKit/storage/IOBlockStorageDriver.h>
+  #include <IOKit/storage/IOMedia.h>
+  #include <IOKit/IOBSD.h>
+#elif defined __linux__
+  //#include <devstat.h>      /* get io counters */
+#elif defined _WIN32 || defined _WIN64
+#else
+#error "unknown platform"
+#endif
 
 #include "worker.h"
 
@@ -27,6 +34,7 @@ struct DiskCounters {
   int64_t write_time;
 };
 
+#ifdef TARGET_OS_MAC
 // Contains the information about the worker to be processes in the work queue
 class IoStatWorker : public Worker {
   public:
@@ -214,5 +222,28 @@ class IoStatWorker : public Worker {
       return resultsObject;
     }
 };
+#else
+// Contains the information about the worker to be processes in the work queue
+class IoStatWorker : public Worker {
+  public:
+    IoStatWorker() {}
+    ~IoStatWorker() {}
+
+    bool prDisk;
+    vector<DiskCounters*> results;
+
+    void inline execute()
+    {
+    }
+
+    Local<Object> inline map()
+    {
+      // HandleScope scope;
+      Local<Object> resultsObject = Object::New();
+      // Return final object
+      return resultsObject;
+    }
+};
+#endif
 
 #endif  // IOSTAT_WORKER_H_
