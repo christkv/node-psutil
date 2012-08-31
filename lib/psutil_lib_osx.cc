@@ -62,13 +62,13 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Set up the iostat command
-  NODE_SET_PROTOTYPE_METHOD(t, "iostat", PSUtilLib::IoStat);
+  NODE_SET_PROTOTYPE_METHOD(t, "disk_io_counters", PSUtilLib::DiskIOCounters);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
 }
 
-Handle<Value> PSUtilLib::IoStat(const Arguments& args) {
+Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
