@@ -26,7 +26,8 @@
 #include <vector>
 
 #include "psutil_lib_osx.h"
-#include "iostat_worker.h"
+#include "disk_io_counters_worker.h"
+#include "network_io_counters_worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
@@ -63,9 +64,46 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
 
   // Set up the iostat command
   NODE_SET_PROTOTYPE_METHOD(t, "disk_io_counters", PSUtilLib::DiskIOCounters);
+  NODE_SET_PROTOTYPE_METHOD(t, "network_io_counters", PSUtilLib::NetworkIOCounters);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
+}
+
+Handle<Value> PSUtilLib::NetworkIOCounters(const Arguments& args) {
+  HandleScope scope;
+
+  // Legal modes
+  if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 1");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
+
+  // Get the callback
+  Local<Function> callback;
+
+  // If we have a single parameter
+  if(args.Length() == 1) {
+    callback = Local<Function>::Cast(args[0]);
+  } else {
+    callback = Local<Function>::Cast(args[1]);
+  }
+
+  // Create a worker object and map the information
+  NetworkIOCountersWorker *worker = new NetworkIOCountersWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
+
+  // Get the value of results being returned
+  worker->prNic = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
+
+  // Trigger the work
+  uv_queue_work(uv_default_loop(),
+            &worker->request,
+            PSUtilLib::Process,
+            PSUtilLib::After);
+
+  // Return the handle to the instance
+  return Undefined();
 }
 
 Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
@@ -86,7 +124,7 @@ Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
   }
 
   // Create a worker object and map the information
-  IoStatWorker *worker = new IoStatWorker();
+  DiskIOCountersWorker *worker = new DiskIOCountersWorker();
   worker->error = false;
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);

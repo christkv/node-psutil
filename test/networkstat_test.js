@@ -10,14 +10,14 @@ exports.tearDown = function(callback) {
   callback();
 }
 
-exports['Should correctly retrieve io counters of the system'] = function(test) {
+exports['Should correctly retrieve network counters of the system'] = function(test) {
   var psUtil = new PSUtil();
-  psUtil.disk_io_counters(function(err, result) {
+  psUtil.network_io_counters(function(err, result) {
     console.log("========================================= results 1")
     console.dir(err)
     console.dir(result)
 
-    psUtil.disk_io_counters(true, function(err, result) {
+    psUtil.network_io_counters(true, function(err, result) {
       console.log("========================================= results 2")
       console.dir(err)
       console.dir(result)

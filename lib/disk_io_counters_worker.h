@@ -1,10 +1,10 @@
-#ifndef IOSTAT_WORKER_H_
-#define IOSTAT_WORKER_H_
+#ifndef DISK_IO_COUNTERS_WORKER_H_
+#define DISK_IO_COUNTERS_WORKER_H_
 
 #include <v8.h>
 #include <vector>
 
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
   #include <CoreFoundation/CoreFoundation.h>
   #include <IOKit/IOKitLib.h>
   #include <IOKit/storage/IOBlockStorageDriver.h>
@@ -34,12 +34,12 @@ struct DiskCounters {
   int64_t write_time;
 };
 
-#ifdef TARGET_OS_MAC
+#ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
-class IoStatWorker : public Worker {
+class DiskIOCountersWorker : public Worker {
   public:
-    IoStatWorker() {}
-    ~IoStatWorker() {}
+    DiskIOCountersWorker() {}
+    ~DiskIOCountersWorker() {}
 
     bool prDisk;
     vector<DiskCounters*> results;
@@ -98,7 +98,6 @@ class IoStatWorker : public Worker {
           // Get reference to the name of the disk
           CFStringRef disk_name_ref = (CFStringRef)CFDictionaryGetValue(parent_dict, CFSTR(kIOBSDNameKey));
           // Allocated a char array for the name
-          // char disk_name[kMaxDiskNameSize];
           char *disk_name = (char*)malloc(kMaxDiskNameSize * sizeof(char));
           // Load the name into the disk_array
           CFStringGetCString(disk_name_ref, disk_name, kMaxDiskNameSize, CFStringGetSystemEncoding());
@@ -224,10 +223,10 @@ class IoStatWorker : public Worker {
 };
 #else
 // Contains the information about the worker to be processes in the work queue
-class IoStatWorker : public Worker {
+class DiskIOCountersWorker : public Worker {
   public:
-    IoStatWorker() {}
-    ~IoStatWorker() {}
+    DiskIOCountersWorker() {}
+    ~DiskIOCountersWorker() {}
 
     bool prDisk;
     vector<DiskCounters*> results;
@@ -246,4 +245,4 @@ class IoStatWorker : public Worker {
 };
 #endif
 
-#endif  // IOSTAT_WORKER_H_
+#endif  // DISK_IO_COUNTERS_WORKER_H_
