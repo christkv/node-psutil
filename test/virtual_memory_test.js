@@ -8,7 +8,7 @@ exports.tearDown = function(callback) {
   callback();
 }
 
-exports['Should correctly virtual memory information'] = function(test) {
+exports['Should correctly fetch virtual memory information'] = function(test) {
   var psUtil = new PSUtil();
   psUtil.virtual_memory(function(err, result) {
     test.equal('number', typeof result.total);

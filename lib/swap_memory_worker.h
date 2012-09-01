@@ -1,5 +1,5 @@
-#ifndef GET_VIRTUAL_MEMORY_WORKER_H_
-#define GET_VIRTUAL_MEMORY_WORKER_H_
+#ifndef SWAP_MEMORY_WORKER_H_
+#define SWAP_MEMORY_WORKER_H_
 
 #include <v8.h>
 
@@ -28,47 +28,43 @@ using namespace node;
 using namespace std;
 
 // Data struct
-struct VirtualMemory {
+struct SwapMemory {
   uint64_t total;
-  uint64_t available;
-  double percent;
   uint64_t used;
   uint64_t free;
-  uint64_t active;
-  uint64_t inactive;
-  uint64_t wired;
+  double percent;
+  uint64_t sin;
+  uint64_t sout;
 };
 
 #ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
-class GetVirtualMemoryWorker : public Worker {
+class SwapMemoryWorker : public Worker {
   public:
-    GetVirtualMemoryWorker() {}
-    ~GetVirtualMemoryWorker() {}
+    SwapMemoryWorker() {}
+    ~SwapMemoryWorker() {}
 
-    VirtualMemory *results;
+    SwapMemory *results;
 
     void inline execute()
     {
-      int      mib[2];
-      uint64_t total;
-      size_t   len = sizeof(total);
+      int mib[2];
+      size_t size;
+      struct xsw_usage totals;
       vm_statistics_data_t vm;
       int pagesize = getpagesize();
 
-      // physical mem
-      mib[0] = CTL_HW;
-      mib[1] = HW_MEMSIZE;
-
-      // Execute sys call
-      if(sysctl(mib, 2, &total, &len, NULL, 0)) {
+      mib[0] = CTL_VM;
+      mib[1] = VM_SWAPUSAGE;
+      size = sizeof(totals);
+      if(sysctl(mib, 2, &totals, &size, NULL, 0) == -1) {
         if(errno != 0) {
           this->error = true;
           this->error_message = strerror(errno);
           return;
         } else {
           this->error = true;
-          this->error_message = (char *)"sysctl(HW_MEMSIZE) failed";
+          this->error_message = (char *)"sysctl(VM_SWAPUSAGE) failed";
           return;
         }
       }
@@ -90,15 +86,13 @@ class GetVirtualMemoryWorker : public Worker {
       }
 
       // Create result object
-      this->results = new VirtualMemory();
-      this->results->total = total;
-      this->results->active = vm.active_count * pagesize;
-      this->results->inactive = vm.inactive_count * pagesize;
-      this->results->wired = vm.wire_count * pagesize;
-      this->results->free = vm.free_count * pagesize;
-      this->results->available = this->results->inactive + this->results->free;
-      this->results->used = this->results->active + this->results->inactive + this->results->wired;
-      this->results->percent = ((double)(this->results->total - this->results->available) / this->results->total) * 100;
+      this->results = new SwapMemory();
+      this->results->total = totals.xsu_total;
+      this->results->used = totals.xsu_used;
+      this->results->free = totals.xsu_avail;
+      this->results->sin = (unsigned long long)vm.pageins * pagesize;
+      this->results->sout = (unsigned long long)vm.pageouts * pagesize;
+      this->results->percent = ((double)(this->results->used) / this->results->total) * 100;
       this->results->percent = ceilf(this->results->percent * 100.0) / 100.0;
     }
 
@@ -108,13 +102,11 @@ class GetVirtualMemoryWorker : public Worker {
       Local<Object> resultsObject = Object::New();
       // Map the structure to the final object
       resultsObject->Set(String::New("total"), Number::New(this->results->total));
-      resultsObject->Set(String::New("active"), Number::New(this->results->active));
-      resultsObject->Set(String::New("inactive"), Number::New(this->results->inactive));
-      resultsObject->Set(String::New("wired"), Number::New(this->results->wired));
-      resultsObject->Set(String::New("free"), Number::New(this->results->free));
-      resultsObject->Set(String::New("available"), Number::New(this->results->available));
       resultsObject->Set(String::New("used"), Number::New(this->results->used));
+      resultsObject->Set(String::New("free"), Number::New(this->results->free));
       resultsObject->Set(String::New("percent"), Number::New(this->results->percent));
+      resultsObject->Set(String::New("sin"), Number::New(this->results->sin));
+      resultsObject->Set(String::New("sout"), Number::New(this->results->sout));
 
       // Cleanup memory
       delete this->results;
@@ -125,10 +117,10 @@ class GetVirtualMemoryWorker : public Worker {
 };
 #else
 // Contains the information about the worker to be processes in the work queue
-class GetVirtualMemoryWorker : public Worker {
+class SwapMemoryWorker : public Worker {
   public:
-    GetVirtualMemoryWorker() {}
-    ~GetVirtualMemoryWorker() {}
+    SwapMemoryWorker() {}
+    ~SwapMemoryWorker() {}
 
     void inline execute()
     {
@@ -144,4 +136,4 @@ class GetVirtualMemoryWorker : public Worker {
 };
 #endif
 
-#endif  // GET_VIRTUAL_MEMORY_WORKER_H_
+#endif  // SWAP_MEMORY_WORKER_H_
