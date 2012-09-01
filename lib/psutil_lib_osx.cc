@@ -28,7 +28,7 @@
 #include "psutil_lib_osx.h"
 #include "disk_io_counters_worker.h"
 #include "network_io_counters_worker.h"
-#include "get_virtual_mem_worker.h"
+#include "virtual_memory_worker.h"
 #include "swap_memory_worker.h"
 
 #ifndef ARRAY_SIZE
@@ -163,7 +163,7 @@ Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
   }
 
   // Create a worker object and map the information
-  GetVirtualMemoryWorker *worker = new GetVirtualMemoryWorker();
+  VirtualMemoryWorker *worker = new VirtualMemoryWorker();
   worker->error = false;
   worker->request.data = worker;
   worker->callback = Persistent<Function>::New(callback);
