@@ -28,6 +28,7 @@
 #include "psutil_lib_osx.h"
 #include "disk_io_counters_worker.h"
 #include "network_io_counters_worker.h"
+#include "get_virtual_mem_worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
@@ -65,6 +66,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   // Set up the iostat command
   NODE_SET_PROTOTYPE_METHOD(t, "disk_io_counters", PSUtilLib::DiskIOCounters);
   NODE_SET_PROTOTYPE_METHOD(t, "network_io_counters", PSUtilLib::NetworkIOCounters);
+  NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
@@ -131,6 +133,38 @@ Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
 
   // Get the value of results being returned
   worker->prDisk = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
+
+  // Trigger the work
+  uv_queue_work(uv_default_loop(),
+            &worker->request,
+            PSUtilLib::Process,
+            PSUtilLib::After);
+
+  // Return the handle to the instance
+  return Undefined();
+}
+
+Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
+  HandleScope scope;
+
+  // Legal modes
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
+
+  // Get the callback
+  Local<Function> callback;
+
+  // If we have a single parameter
+  if(args.Length() == 1) {
+    callback = Local<Function>::Cast(args[0]);
+  } else {
+    callback = Local<Function>::Cast(args[1]);
+  }
+
+  // Create a worker object and map the information
+  GetVirtualMemoryWorker *worker = new GetVirtualMemoryWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
 
   // Trigger the work
   uv_queue_work(uv_default_loop(),

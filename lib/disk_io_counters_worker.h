@@ -228,9 +228,6 @@ class DiskIOCountersWorker : public Worker {
     DiskIOCountersWorker() {}
     ~DiskIOCountersWorker() {}
 
-    bool prDisk;
-    vector<DiskCounters*> results;
-
     void inline execute()
     {
     }

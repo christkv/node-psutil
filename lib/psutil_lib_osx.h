@@ -24,6 +24,7 @@ class PSUtilLib : public ObjectWrap {
     // Methods for data collection
     static v8::Handle<v8::Value> DiskIOCounters(const v8::Arguments& args);
     static v8::Handle<v8::Value> NetworkIOCounters(const v8::Arguments& args);
+    static v8::Handle<v8::Value> VirtualMemory(const v8::Arguments& args);
 
     // Handles the uv calls
     static void Process(uv_work_t* work_req);
