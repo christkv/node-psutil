@@ -70,7 +70,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "network_io_counters", PSUtilLib::NetworkIOCounters);
   NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
-  NODE_SET_PROTOTYPE_METHOD(t, "cpu_percent", PSUtilLib::CPUPercent);
+  NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
@@ -217,10 +217,10 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(args.Length() == 3 && !args[0]->IsNumber() && !args[0]->IsBoolean() && !args[0]->IsFunction()) return VException("function requires [boolean, function] or [function] 2");
+  if(args.Length() == 2 && !args[0]->IsBoolean() && !args[1]->IsFunction()) return VException("function requires [boolean, function] or [function] 2");
 
   // Get the callback
-  Local<Function> callback = Local<Function>::Cast(args[2]);
+  Local<Function> callback = Local<Function>::Cast(args[1]);
 
   // Create a worker object and map the information
   CPUWorker *worker = new CPUWorker();
@@ -229,8 +229,7 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
   worker->callback = Persistent<Function>::New(callback);
 
   // Set parameters
-  worker->perCPU = args[1]->ToBoolean()->BooleanValue();
-  worker->interval = args[0]->ToNumber()->Value();
+  worker->perCPU = args[0]->ToBoolean()->BooleanValue();
 
   // Trigger the work
   uv_queue_work(uv_default_loop(),

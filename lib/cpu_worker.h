@@ -40,7 +40,6 @@ class CPUWorker : public Worker {
     ~CPUWorker() {}
 
     bool perCPU;
-    double interval;
     vector<CPUStatistics*> results;
 
     void inline execute()
