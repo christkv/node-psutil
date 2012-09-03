@@ -31,6 +31,7 @@
 #include "virtual_memory_worker.h"
 #include "swap_memory_worker.h"
 #include "cpu_worker.h"
+#include "pid_list_worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
@@ -71,6 +72,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
+  NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
@@ -116,8 +118,8 @@ Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 1");
-  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
+  if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
 
   // Get the callback
   Local<Function> callback;
@@ -152,7 +154,7 @@ Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [function]");
 
   // Get the callback
   Local<Function> callback;
@@ -184,7 +186,7 @@ Handle<Value> PSUtilLib::SwapMemory(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function] 2");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [function]");
 
   // Get the callback
   Local<Function> callback;
@@ -217,7 +219,7 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
   HandleScope scope;
 
   // Legal modes
-  if(args.Length() == 2 && !args[0]->IsBoolean() && !args[1]->IsFunction()) return VException("function requires [boolean, function] or [function] 2");
+  if(args.Length() == 2 && !args[0]->IsBoolean() && !args[1]->IsFunction()) return VException("function requires [boolean, function] or [function]");
 
   // Get the callback
   Local<Function> callback = Local<Function>::Cast(args[1]);
@@ -230,6 +232,31 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
 
   // Set parameters
   worker->perCPU = args[0]->ToBoolean()->BooleanValue();
+
+  // Trigger the work
+  uv_queue_work(uv_default_loop(),
+            &worker->request,
+            PSUtilLib::Process,
+            PSUtilLib::After);
+
+  // Return the handle to the instance
+  return Undefined();
+}
+
+Handle<Value> PSUtilLib::PidList(const Arguments& args) {
+  HandleScope scope;
+
+  // Legal modes
+  if(args.Length() == 1 && !args[0]->IsFunction()) return VException("function requires [function]");
+
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[0]);
+
+  // Create a worker object and map the information
+  PidListWorker *worker = new PidListWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
 
   // Trigger the work
   uv_queue_work(uv_default_loop(),
