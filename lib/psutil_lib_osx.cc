@@ -25,13 +25,14 @@
 #include <limits>
 #include <vector>
 
+#include "workers/disk_io_counters_worker.h"
+#include "workers/network_io_counters_worker.h"
+#include "workers/virtual_memory_worker.h"
+#include "workers/swap_memory_worker.h"
+#include "workers/cpu_worker.h"
+#include "workers/pid_list_worker.h"
+
 #include "psutil_lib_osx.h"
-#include "disk_io_counters_worker.h"
-#include "network_io_counters_worker.h"
-#include "virtual_memory_worker.h"
-#include "swap_memory_worker.h"
-#include "cpu_worker.h"
-#include "pid_list_worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
