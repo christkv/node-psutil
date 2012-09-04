@@ -12,11 +12,23 @@ exports['Should correctly fetch process list'] = function(test) {
   var psUtil = new PSUtil();
   // Get the process list
   psUtil.process_list(function(err, processes) {
-    console.log("=========================================================")
-    console.dir(err)
-    console.dir(processes)
-    // test.equal(null, err);
-    // test.ok(Array.isArray(result));
-    test.done();
+    processes[20].name(function(err, name) {
+      test.equal(null, err);
+      test.ok(typeof name == 'string');
+
+      processes[10].ppid(function(err, ppid) {
+        test.equal(null, err);
+        test.ok(typeof ppid == 'number');
+
+        processes[20].exe(function(err, exe) {
+          test.equal(null, err);
+          test.ok(typeof exe == 'string');
+          // console.log("========================================================= 4")
+          // console.dir(err)
+          // console.dir(exe)
+          test.done();
+        });
+      });
+    });
   });
 }
