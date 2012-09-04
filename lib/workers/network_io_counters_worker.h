@@ -116,7 +116,7 @@ class NetworkIOCountersWorker : public Worker {
       free(buf);
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();
@@ -194,7 +194,7 @@ class NetworkIOCountersWorker : public Worker {
     {
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();

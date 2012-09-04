@@ -31,6 +31,7 @@
 #include "workers/swap_memory_worker.h"
 #include "workers/cpu_worker.h"
 #include "workers/pid_list_worker.h"
+#include "workers/pid_exists_worker.h"
 
 #include "psutil_lib_osx.h"
 
@@ -74,6 +75,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
   NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
+  NODE_SET_PROTOTYPE_METHOD(t, "pid_exists", PSUtilLib::PidExists);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
@@ -269,6 +271,34 @@ Handle<Value> PSUtilLib::PidList(const Arguments& args) {
   return Undefined();
 }
 
+Handle<Value> PSUtilLib::PidExists(const Arguments& args) {
+  HandleScope scope;
+
+  // Legal modes
+  if(args.Length() == 2 && !args[0]->IsNumber() && !args[1]->IsFunction()) return VException("function requires [number, function]");
+
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[1]);
+
+  // Create a worker object and map the information
+  PidExistsWorker *worker = new PidExistsWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
+
+  // Set parameters
+  worker->pid = args[0]->ToNumber()->Value();
+
+  // Trigger the work
+  uv_queue_work(uv_default_loop(),
+            &worker->request,
+            PSUtilLib::Process,
+            PSUtilLib::After);
+
+  // Return the handle to the instance
+  return Undefined();
+}
+
 void PSUtilLib::Process(uv_work_t* work_req) {
   // Grab the worker
   Worker *worker = static_cast<Worker*>(work_req->data);
@@ -298,10 +328,10 @@ void PSUtilLib::After(uv_work_t* work_req) {
     }
   } else {
     // Map the data
-    v8::Local<v8::Object> result = worker->map();
+    v8::Handle<v8::Value> result = worker->map();
 
     // Set up the callback with a null first
-    v8::Local<v8::Value> args[2] = { v8::Local<v8::Value>::New(v8::Null()), result };
+    v8::Handle<v8::Value> args[2] = { v8::Local<v8::Value>::New(v8::Null()), result };
     // Wrap the callback function call in a TryCatch so that we can call
     // node's FatalException afterwards. This makes it possible to catch
     // the exception from JavaScript land using the

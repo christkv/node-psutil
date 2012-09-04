@@ -96,7 +96,7 @@ class SwapMemoryWorker : public Worker {
       this->results->percent = ceilf(this->results->percent * 100.0) / 100.0;
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();
@@ -126,7 +126,7 @@ class SwapMemoryWorker : public Worker {
     {
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();

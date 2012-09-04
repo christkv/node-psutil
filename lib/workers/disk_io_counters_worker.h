@@ -161,7 +161,7 @@ class DiskIOCountersWorker : public Worker {
       }
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();
@@ -232,7 +232,7 @@ class DiskIOCountersWorker : public Worker {
     {
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();

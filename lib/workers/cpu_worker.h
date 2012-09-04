@@ -121,7 +121,7 @@ class CPUWorker : public Worker {
       }
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // If not pr disk accumulate all the data
       if(!this->perCPU) {
@@ -190,7 +190,7 @@ class CPUWorker : public Worker {
     {
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();

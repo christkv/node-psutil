@@ -23,7 +23,7 @@ class Worker {
     // Virtual execute function
     void virtual execute();
     // Map to output object
-    Local<Object> virtual map();
+    Handle<Value> virtual map();
 };
 
 #endif  // WORKER_H_

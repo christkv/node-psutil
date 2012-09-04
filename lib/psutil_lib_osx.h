@@ -28,6 +28,7 @@ class PSUtilLib : public ObjectWrap {
     static v8::Handle<v8::Value> SwapMemory(const v8::Arguments& args);
     static v8::Handle<v8::Value> CPUPercent(const v8::Arguments& args);
     static v8::Handle<v8::Value> PidList(const v8::Arguments& args);
+    static v8::Handle<v8::Value> PidExists(const v8::Arguments& args);
 
     // Handles the uv calls
     static void Process(uv_work_t* work_req);

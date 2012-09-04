@@ -56,7 +56,7 @@ class PidListWorker : public Worker {
       }
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // Process all the values
       vector<uint64_t>::const_iterator i;
@@ -159,7 +159,7 @@ class PidListWorker : public Worker {
     {
     }
 
-    Local<Object> inline map()
+    Handle<Value> inline map()
     {
       // HandleScope scope;
       Local<Object> resultsObject = Object::New();
