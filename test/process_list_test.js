@@ -23,10 +23,13 @@ exports['Should correctly fetch process list'] = function(test) {
         processes[20].exe(function(err, exe) {
           test.equal(null, err);
           test.ok(typeof exe == 'string');
-          // console.log("========================================================= 4")
-          // console.dir(err)
-          // console.dir(exe)
-          test.done();
+
+          processes[21].cpu_times(function(err, times) {
+            console.log("========================================================= 1")
+            console.dir(err)
+            console.dir(times)
+            test.done();
+          });
         });
       });
     });

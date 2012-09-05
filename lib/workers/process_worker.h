@@ -44,6 +44,8 @@ using namespace std;
 const uint32_t NAME = 0;
 const uint32_t PPID = 1;
 const uint32_t EXE = 2;
+const uint32_t IO_COUNTERS = 3;
+const uint32_t CPU_TIMES = 4;
 
 #ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
@@ -60,6 +62,7 @@ class ProcessWorker : public Worker {
     // Data pointer
     char* char_data;
     long long_data;
+    float *float_data;
 
     void inline execute()
     {
@@ -69,6 +72,11 @@ class ProcessWorker : public Worker {
         this->process_ppid();
       } else if(this->operation == EXE) {
         this->process_exe();
+      } else if(this->operation == CPU_TIMES) {
+        this->process_cpu_times();
+      } else {
+        this->error = true;
+        this->error_message = (char *)"Operation is not supported.";
       }
     }
 
@@ -86,6 +94,12 @@ class ProcessWorker : public Worker {
         result = Number::New(this->long_data);
       } else if(this->operation == EXE) {
         result = String::New((char*)this->char_data);
+      } else if(this->operation == CPU_TIMES) {
+        Local<Array> values = Array::New(2);
+        values->Set(0, Number::New(this->float_data[0]));
+        values->Set(1, Number::New(this->float_data[1]));
+        result = values;
+        free(float_data);
       } else {
         result = Undefined();
       }
@@ -94,6 +108,20 @@ class ProcessWorker : public Worker {
     }
 
   protected:
+    void inline process_cpu_times()
+    {
+      struct proc_taskinfo pti;
+
+      if(!_proc_pidinfo(this->pid, PROC_PIDTASKINFO, &pti, sizeof(pti))) {
+        return;
+      }
+
+      // Allocate the data structure for storing the values
+      this->float_data = (float*)malloc(sizeof(float) * 2);
+      this->float_data[0] = (float)(pti.pti_total_user / 1000000000.0);
+      this->float_data[1] = (float)(pti.pti_total_system / 1000000000.0);
+    }
+
     void inline process_exe()
     {
       char buf[PATH_MAX];
@@ -186,6 +214,33 @@ class ProcessWorker : public Worker {
 
       // otherwise return 0 for PID not found
       return 0;
+    }
+
+    /*
+     * A thin wrapper around proc_pidinfo()
+     */
+    int inline _proc_pidinfo(long pid, int flavor, void *pti, int size)
+    {
+      int ret = proc_pidinfo((int)pid, flavor, 0, pti, size);
+      if(ret == 0) {
+        if(!pid_exists(this->pid)) {
+          this->error = true;
+          this->error_message = (char *)"Unable to get the process's information or no such process.";
+          return 0;
+        } else {
+          this->error = true;
+          this->error_message = (char *)"Access denied to the process.";
+          return 0;
+        }
+      }
+      else if(ret != size) {
+        this->error = true;
+        this->error_message = (char *)"Access denied to the process.";
+        return 0;
+      }
+      else {
+        return 1;
+      }
     }
 };
 
