@@ -15,7 +15,7 @@
   #include <sys/sysctl.h>
   #include <math.h>
 #elif defined __linux__
-  //#include <devstat.h>      /* get io counters */
+  #include <sys/sysinfo.h>
 #elif defined _WIN32 || defined _WIN64
 #else
 #error "unknown platform"
@@ -27,6 +27,7 @@
 using namespace node;
 using namespace std;
 
+#ifdef __APPLE__
 // Data struct
 struct VirtualMemory {
   uint64_t total;
@@ -39,7 +40,6 @@ struct VirtualMemory {
   uint64_t wired;
 };
 
-#ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
 class VirtualMemoryWorker : public Worker {
   public:
@@ -119,6 +119,54 @@ class VirtualMemoryWorker : public Worker {
       // Cleanup memory
       delete this->results;
 
+      // Return final object
+      return resultsObject;
+    }
+};
+#elif defined __linux__
+// Data struct
+struct VirtualMemory {
+  uint64_t total;
+  uint64_t free;
+  uint64_t buffer;
+  uint64_t shared;
+  uint64_t swap_total;
+  uint64_t swap_free;
+};
+
+// Contains the information about the worker to be processes in the work queue
+class VirtualMemoryWorker : public Worker {
+  public:
+    VirtualMemoryWorker() {}
+    ~VirtualMemoryWorker() {}
+
+    VirtualMemory *results;
+
+    void inline execute()
+    {
+      struct sysinfo info;
+
+      if(sysinfo(&info) != 0) {
+        this->error = true;
+        this->error_message = strerror(errno);
+        return;
+      }
+    }
+
+    Handle<Value> inline map()
+    {
+      // HandleScope scope;
+      Local<Object> resultsObject = Object::New();
+      // Map the structure to the final object
+      resultsObject->Set(String::New("total"), Number::New(this->results->total));
+      resultsObject->Set(String::New("free"), Number::New(this->results->free));
+      resultsObject->Set(String::New("buffer"), Number::New(this->results->buffer));
+      resultsObject->Set(String::New("shared"), Number::New(this->results->shared));
+      resultsObject->Set(String::New("swap_total"), Number::New(this->results->swap_total));
+      resultsObject->Set(String::New("swap_free"), Number::New(this->results->swap_free));
+
+      // Cleanup memory
+      delete this->results;
       // Return final object
       return resultsObject;
     }
