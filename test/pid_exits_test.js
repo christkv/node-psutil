@@ -10,7 +10,7 @@ exports.tearDown = function(callback) {
 
 exports['Should correctly check the existance of a pid'] = function(test) {
   var psUtil = new PSUtil();
-  psUtil.get_pid_list(function(err, result) {
+  psUtil.pid_list(function(err, result) {
     test.equal(null, err);
     test.ok(Array.isArray(result));
 
