@@ -4,16 +4,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
-
 #include <v8.h>
-
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
+#include <node.h>
 
 #include <node.h>
 #include <node_version.h>
@@ -37,6 +29,7 @@
 #include "workers/process_worker.h"
 
 #include "psutil_lib_osx.h"
+#include "workers/worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))

@@ -153,6 +153,14 @@ class VirtualMemoryWorker : public Worker {
         this->error_message = strerror(errno);
         return;
       }
+
+      this->results = new VirtualMemory();
+      this->results->total = (unsigned long long)info.totalram * info.mem_unit;
+      this->results->free = (unsigned long long)info.freeram   * info.mem_unit;
+      this->results->buffer = (unsigned long long)info.bufferram * info.mem_unit;
+      this->results->shared = (unsigned long long)info.sharedram * info.mem_unit;
+      this->results->swap_total = (unsigned long long)info.totalswap * info.mem_unit;
+      this->results->swap_free = (unsigned long long)info.freeswap  * info.mem_unit;
     }
 
     Handle<Value> inline map()
