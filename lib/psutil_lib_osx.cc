@@ -76,6 +76,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_partitions", PSUtilLib::DiskPartitions);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_usage", PSUtilLib::DiskUsage);
+  NODE_SET_PROTOTYPE_METHOD(t, "sys_conf", PSUtilLib::SysConf);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
