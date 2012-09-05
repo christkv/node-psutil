@@ -72,6 +72,7 @@ class PidExistsWorker : public Worker {
     ~PidExistsWorker() {}
 
     bool exists;
+    uint64_t pid;
 
     void inline execute()
     {
