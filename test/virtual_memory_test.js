@@ -15,7 +15,6 @@ exports['Should correctly fetch virtual memory information'] = function(test) {
     test.equal('number', typeof result.total);
     test.equal('number', typeof result.active);
     test.equal('number', typeof result.inactive);
-    test.equal('number', typeof result.wired);
     test.equal('number', typeof result.free);
     test.equal('number', typeof result.available);
     test.equal('number', typeof result.used);
