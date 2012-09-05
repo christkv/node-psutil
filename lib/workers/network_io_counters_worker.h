@@ -190,6 +190,8 @@ class NetworkIOCountersWorker : public Worker {
     NetworkIOCountersWorker() {}
     ~NetworkIOCountersWorker() {}
 
+    bool prNic;
+
     void inline execute()
     {
     }

@@ -228,6 +228,8 @@ class DiskIOCountersWorker : public Worker {
     DiskIOCountersWorker() {}
     ~DiskIOCountersWorker() {}
 
+    bool prDisk;
+
     void inline execute()
     {
     }

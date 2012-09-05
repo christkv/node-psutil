@@ -17,6 +17,7 @@
 #elif defined __linux__
   #include <sys/sysinfo.h>
   #include <string.h>
+  #include <errno.h>
 #elif defined _WIN32 || defined _WIN64
 #else
 #error "unknown platform"

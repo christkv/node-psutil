@@ -186,6 +186,8 @@ class CPUWorker : public Worker {
     CPUWorker() {}
     ~CPUWorker() {}
 
+    bool perCPU;
+
     void inline execute()
     {
     }
