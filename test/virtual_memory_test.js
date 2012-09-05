@@ -45,9 +45,13 @@ exports['Should correctly fetch virtual memory information on linux'] = function
   }
 
   psUtil.virtual_memory(function(err, result) {
-    console.log("-------------------------------------------------------")
-    console.dir(err)
-    console.dir(result)
+    test.equal('number', typeof result.total);
+    test.equal('number', typeof result.active);
+    test.equal('number', typeof result.inactive);
+    test.equal('number', typeof result.free);
+    test.equal('number', typeof result.available);
+    test.equal('number', typeof result.used);
+    test.equal('number', typeof result.percent);
     // Reset platform changes and finish test
     process.platform = platform;
     PSUtil._readFile = readFileFunction;
