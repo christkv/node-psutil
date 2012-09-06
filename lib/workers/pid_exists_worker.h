@@ -4,16 +4,16 @@
 #include <v8.h>
 #include <vector>
 
-#ifdef __APPLE__
+// #ifdef __APPLE__
 
-#include <sys/sysctl.h>
-#include <mach/mach_vm.h>
+// #include <sys/sysctl.h>
+// #include <mach/mach_vm.h>
 
-#elif defined __linux__
-#elif defined _WIN32 || defined _WIN64
-#else
-#error "unknown platform"
-#endif
+// #elif defined __linux__
+// #elif defined _WIN32 || defined _WIN64
+// #else
+// #error "unknown platform"
+// #endif
 
 #include "worker.h"
 
@@ -21,7 +21,7 @@ using namespace v8;
 using namespace node;
 using namespace std;
 
-#ifdef __APPLE__
+// #ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
 class PidExistsWorker : public Worker {
   public:
@@ -64,25 +64,25 @@ class PidExistsWorker : public Worker {
     }
 };
 
-#else
-// Contains the information about the worker to be processes in the work queue
-class PidExistsWorker : public Worker {
-  public:
-    PidExistsWorker() {}
-    ~PidExistsWorker() {}
+// #else
+// // Contains the information about the worker to be processes in the work queue
+// class PidExistsWorker : public Worker {
+//   public:
+//     PidExistsWorker() {}
+//     ~PidExistsWorker() {}
 
-    bool exists;
-    uint64_t pid;
+//     bool exists;
+//     uint64_t pid;
 
-    void inline execute()
-    {
-    }
+//     void inline execute()
+//     {
+//     }
 
-    Handle<Value> inline map()
-    {
-      return v8::Boolean::New(false);
-    }
-};
-#endif
+//     Handle<Value> inline map()
+//     {
+//       return v8::Boolean::New(false);
+//     }
+// };
+// #endif
 
 #endif  // PID_EXISTS_WORKER_H_
