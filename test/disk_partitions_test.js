@@ -1,4 +1,5 @@
-var PSUtil = require('../lib/psutil').PSUtil;
+var PSUtil = require('../lib/psutil').PSUtil,
+  fs = require('fs');
 
 exports.setUp = function(callback) {
   callback();
@@ -13,6 +14,46 @@ exports['Should correctly retrieve io counters of the system'] = function(test) 
   psUtil.disk_partitions(function(err, partitions) {
     test.equal(null, err)
     test.ok(Array.isArray(partitions));
+    test.done();
+  });
+}
+
+exports['Should correctly retrieve io counters of the system on linux'] = function(test) {
+  var psUtil = new PSUtil();
+  // Save the existing setup
+  var platform = process.platform;
+  var readFileFunction = PSUtil._readFile;
+  // var lib_function = psUtil._lib.virtual_memory;
+
+  // Setup Overrides
+  process.platform = 'linux'
+  PSUtil._readFile = function(path, encoding, callback) {
+    fs.readFile('./test/linux/filesystems.txt', encoding, callback);
+  }
+  // psUtil._lib.virtual_memory = function(callback) {
+  //   callback(null, { total: 1042206720,
+  //       free: 96088064,
+  //       buffer: 9764864,
+  //       shared: 0,
+  //       swap_total: 1071640576,
+  //       swap_free: 960806912 });
+  // }
+
+  psUtil.disk_partitions(function(err, result) {
+    console.log("-------------------------------------------------------")
+    console.dir(err)
+    console.dir(result)
+    // test.equal('number', typeof result.total);
+    // test.equal('number', typeof result.active);
+    // test.equal('number', typeof result.inactive);
+    // test.equal('number', typeof result.free);
+    // test.equal('number', typeof result.available);
+    // test.equal('number', typeof result.used);
+    // test.equal('number', typeof result.percent);
+    // Reset platform changes and finish test
+    process.platform = platform;
+    PSUtil._readFile = readFileFunction;
+    // psUtil._lib.virtual_memory = lib_function;
     test.done();
   });
 }
