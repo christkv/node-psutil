@@ -57,7 +57,54 @@ exports['Should correctly fetch process name in linux'] = function(test) {
     // Reset platform changes and finish test
     process.platform = platform;
     Process._readFile = readFileFunction;
-    // psUtil._lib.disk_partitions = lib_function;
+    test.done();
+  });
+}
+
+exports['Should correctly fetch process ppid in linux'] = function(test) {
+  var psUtil = new PSUtil();
+  var _process = new Process(0, psUtil._lib);
+  // Save the existing setup
+  var platform = process.platform;
+  var readFileFunction = Process._readFile;
+
+  // Setup Overrides
+  process.platform = 'linux'
+  Process._readFile = function(path, encoding, callback) {
+    fs.readFile('./test/linux/process_status.txt', encoding, callback);
+  }
+
+  _process.ppid(function(err, ppid) {
+    test.equal(null, err);
+    test.equal(1, ppid);
+
+    // Reset platform changes and finish test
+    process.platform = platform;
+    Process._readFile = readFileFunction;
+    test.done();
+  });
+}
+
+exports['Should correctly fetch process exe in linux'] = function(test) {
+  var psUtil = new PSUtil();
+  var _process = new Process(0, psUtil._lib);
+  // Save the existing setup
+  var platform = process.platform;
+  var readFileFunction = Process._readLink;
+
+  // Setup Overrides
+  process.platform = 'linux'
+  Process._readLink = function(path, callback) {
+    callback(null, "/usr/bin/do");
+  }
+
+  _process.exe(function(err, ppid) {
+    test.equal(null, err);
+    test.equal("/usr/bin/do", ppid);
+
+    // Reset platform changes and finish test
+    process.platform = platform;
+    Process._readLink = readFileFunction;
     test.done();
   });
 }
