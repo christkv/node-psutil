@@ -4,15 +4,15 @@
 #include <v8.h>
 #include <vector>
 
-#ifdef __APPLE__
+// #ifdef __APPLE__
   #include <sys/statvfs.h>
   #include <sys/types.h>
-#elif defined __linux__
-  //#include <devstat.h>      /* get io counters */
-#elif defined _WIN32 || defined _WIN64
-#else
-#error "unknown platform"
-#endif
+// #elif defined __linux__
+//   //#include <devstat.h>      /* get io counters */
+// #elif defined _WIN32 || defined _WIN64
+// #else
+// #error "unknown platform"
+// #endif
 
 #include "worker.h"
 
@@ -28,7 +28,7 @@ struct DiskUsage {
   double percent;
 };
 
-#ifdef __APPLE__
+// #ifdef __APPLE__
 // Contains the information about the worker to be processes in the work queue
 class DiskUsageWorker : public Worker {
   public:
@@ -75,28 +75,28 @@ class DiskUsageWorker : public Worker {
       return resultsObject;
     }
 };
-#else
-// Contains the information about the worker to be processes in the work queue
-class DiskUsageWorker : public Worker {
-  public:
-    DiskUsageWorker() {}
-    ~DiskUsageWorker() {}
+// #else
+// // Contains the information about the worker to be processes in the work queue
+// class DiskUsageWorker : public Worker {
+//   public:
+//     DiskUsageWorker() {}
+//     ~DiskUsageWorker() {}
 
-    char* path;
-    DiskUsage result;
+//     char* path;
+//     DiskUsage result;
 
-    void inline execute()
-    {
-    }
+//     void inline execute()
+//     {
+//     }
 
-    Handle<Value> inline map()
-    {
-      // HandleScope scope;
-      Local<Object> resultsObject = Object::New();
-      // Return final object
-      return resultsObject;
-    }
-};
-#endif
+//     Handle<Value> inline map()
+//     {
+//       // HandleScope scope;
+//       Local<Object> resultsObject = Object::New();
+//       // Return final object
+//       return resultsObject;
+//     }
+// };
+// #endif
 
 #endif  // DISK_USAGE_WORKER_H_
