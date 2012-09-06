@@ -35,80 +35,78 @@ exports['Should correctly retrieve io counters of the system on linux'] = functi
   }
 
   psUtil.disk_partitions(function(err, result) {
-    console.log("-------------------------------------------------------")
-    console.dir(err)
-    console.dir(result)
-    // test.equal('number', typeof result.total);
-    // test.equal('number', typeof result.active);
-    // test.equal('number', typeof result.inactive);
-    // test.equal('number', typeof result.free);
-    // test.equal('number', typeof result.available);
-    // test.equal('number', typeof result.used);
-    // test.equal('number', typeof result.percent);
-    // Reset platform changes and finish test
-    process.platform = platform;
-    PSUtil._readFile = readFileFunction;
-    psUtil._lib.disk_partitions = lib_function;
-    test.done();
+    test.equal(null, err);
+    test.equal(2, result.length);
+
+    psUtil.disk_partitions(true, function(err, result) {
+      test.equal(null, err);
+      test.equal(15, result.length);
+
+      // Reset platform changes and finish test
+      process.platform = platform;
+      PSUtil._readFile = readFileFunction;
+      psUtil._lib.disk_partitions = lib_function;
+      test.done();
+    });
   });
 }
 
-var disk_partitions_data = [ { device: '/dev/sr0',
-    mountpoint: 'media/Parallels Tools',
-    fstype: 'dia/Parallels Tools',
-    opts: 'arallels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'edia/Parallels Tools',
-    opts: 'Parallels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'r0',
-    fstype: 'edia/Parallels Tools',
-    opts: 'arallels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 's',
-    opts: '9660' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'ls Tools',
-    opts: '' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'Tools',
-    opts: 'o9660' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'media/Parallels Tools',
-    opts: 'allels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: '0',
-    fstype: 'Parallels Tools',
-    opts: 'ls Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'r0',
-    fstype: 'edia/Parallels Tools',
-    opts: 'arallels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: '/Parallels Tools',
-    opts: 'lels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'a/Parallels Tools',
-    opts: 'llels Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'sr0',
-    fstype: 'Parallels Tools',
-    opts: 'ls Tools' },
-  { device: '/dev/sr0',
-    mountpoint: 'dia/Parallels Tools',
-    fstype: 'o9660',
-    opts: 'uid,nodev,uid=1000,gid=1000,iocharset=utf8,mode=0400,dmode=0500,uhelper=udisks' },
-  { device: '/dev/sr0',
-    mountpoint: 'arallels Tools',
-    fstype: '660',
-    opts: 'd=1000,gid=1000,iocharset=utf8,mode=0400,dmode=0500,uhelper=udisks' },
+var disk_partitions_data = [ { device: '/dev/sda1',
+    mountpoint: '/',
+    fstype: 'ext4',
+    opts: 'rw,errors=remount-ro' },
+  { device: 'proc',
+    mountpoint: '/proc',
+    fstype: 'proc',
+    opts: 'rw,noexec,nosuid,nodev' },
+  { device: 'sysfs',
+    mountpoint: '/sys',
+    fstype: 'sysfs',
+    opts: 'rw,noexec,nosuid,nodev' },
+  { device: 'none',
+    mountpoint: '/sys/fs/fuse/connections%',
+    fstype: 'fusectl',
+    opts: 'rw' },
+  { device: 'none',
+    mountpoint: '/sys/kernel/debug',
+    fstype: 'debugfs',
+    opts: 'rw' },
+  { device: 'none',
+    mountpoint: '/sys/kernel/security',
+    fstype: 'securityfs',
+    opts: 'rw' },
+  { device: 'udev',
+    mountpoint: '/dev',
+    fstype: 'devtmpfs',
+    opts: 'rw,mode=0755' },
+  { device: 'devpts',
+    mountpoint: '/dev/pts',
+    fstype: 'devpts',
+    opts: 'rw,noexec,nosuid,gid=5,mode=0620' },
+  { device: 'tmpfs',
+    mountpoint: '/run',
+    fstype: 'tmpfs',
+    opts: 'rw,noexec,nosuid,size=10%,mode=0755' },
+  { device: 'none',
+    mountpoint: '/run/lock',
+    fstype: 'tmpfs',
+    opts: 'rw,noexec,nosuid,nodev,size=5242880' },
+  { device: 'none',
+    mountpoint: '/run/shm',
+    fstype: 'tmpfs',
+    opts: 'rw,nosuid,nodev' },
+  { device: 'none',
+    mountpoint: '/media/psf',
+    fstype: 'prl_fs',
+    opts: 'rw,nosuid,nodev,sync,noatime,share,_netdev' },
+  { device: 'binfmt_misc',
+    mountpoint: '/proc/sys/fs/binfmt_misc%',
+    fstype: 'binfmt_misc',
+    opts: 'rw,noexec,nosuid,nodev' },
+  { device: 'gvfs-fuse-daemon',
+    mountpoint: '/home/parallels/.gvfs',
+    fstype: 'fuse.gvfs-fuse-daemon',
+    opts: 'rw,nosuid,nodev,user=parallels' },
   { device: '/dev/sr0',
     mountpoint: '/media/Parallels Tools',
     fstype: 'iso9660',
