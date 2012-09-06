@@ -1,4 +1,6 @@
-var PSUtil = require('../lib/psutil').PSUtil;
+var PSUtil = require('../lib/psutil').PSUtil,
+ Process = require('../lib/process').Process,
+ fs = require('fs');
 
 exports.setUp = function(callback) {
   callback();
@@ -32,5 +34,30 @@ exports['Should correctly fetch process list'] = function(test) {
         });
       });
     });
+  });
+}
+
+exports['Should correctly fetch process name in linux'] = function(test) {
+  var psUtil = new PSUtil();
+  var _process = new Process(0, psUtil._lib);
+  // Save the existing setup
+  var platform = process.platform;
+  var readFileFunction = Process._readFile;
+
+  // Setup Overrides
+  process.platform = 'linux'
+  Process._readFile = function(path, encoding, callback) {
+    fs.readFile('./test/linux/process_stat.txt', encoding, callback);
+  }
+
+  _process.name(function(err, name) {
+    test.equal(null, err);
+    test.equal("gvfsd", name);
+
+    // Reset platform changes and finish test
+    process.platform = platform;
+    Process._readFile = readFileFunction;
+    // psUtil._lib.disk_partitions = lib_function;
+    test.done();
   });
 }
