@@ -108,3 +108,33 @@ exports['Should correctly fetch process exe in linux'] = function(test) {
     test.done();
   });
 }
+
+exports['Should correctly fetch process cpu_times in linux'] = function(test) {
+  var psUtil = new PSUtil();
+  var _process = new Process(0, psUtil._lib);
+  // Save the existing setup
+  var platform = process.platform;
+  var readFileFunction = Process._readFile;
+  var lib_function = psUtil._lib.sys_conf;
+
+  // Setup Overrides
+  process.platform = 'linux'
+  Process._readFile = function(path, encoding, callback) {
+    fs.readFile('./test/linux/process_stat.txt', encoding, callback);
+  }
+  psUtil._lib.sys_conf = function(code, callback) {
+    callback(null, 100);
+  }
+
+  _process.cpu_times(function(err, cpu_times) {
+    test.equal(null, err);
+    test.ok(Array.isArray(cpu_times));
+    test.ok(2, cpu_times.length);
+
+    // Reset platform changes and finish test
+    process.platform = platform;
+    Process._readFile = readFileFunction;
+    psUtil._lib.sys_conf = lib_function;
+    test.done();
+  });
+}
