@@ -238,6 +238,8 @@ class DiskPartitionsWorker : public Worker {
         diskPartition->mount_point = entry->mnt_dir;
         diskPartition->fstype = entry->mnt_type;
         diskPartition->opts = entry->mnt_opts;
+        // Add to vector
+        this->results.push_back(diskPartition);
       }
 
       endmntent(file);
