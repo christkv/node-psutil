@@ -234,10 +234,10 @@ class DiskPartitionsWorker : public Worker {
 
         // Create a new document
         DiskPartition *diskPartition = new DiskPartition();
-        diskPartition->device = entry->mnt_fsname;
-        diskPartition->mount_point = entry->mnt_dir;
-        diskPartition->fstype = entry->mnt_type;
-        diskPartition->opts = entry->mnt_opts;
+        diskPartition->device = copyString(entry->mnt_fsname);
+        diskPartition->mount_point = copyString(entry->mnt_dir);
+        diskPartition->fstype = copyString(entry->mnt_type);
+        diskPartition->opts = copyString(entry->mnt_opts);
         // Add to vector
         this->results.push_back(diskPartition);
       }
@@ -255,6 +255,7 @@ class DiskPartitionsWorker : public Worker {
       for(i = this->results.begin(); i != this->results.end(); i++) {
         // Reference the diskCounters
         DiskPartition *partition = *i;
+
         // DiskObject
         Local<Object> partitionObject = Object::New();
         partitionObject->Set(String::New("device"), String::New(partition->device));
@@ -264,15 +265,21 @@ class DiskPartitionsWorker : public Worker {
         // Add to the result object
         resultsObject->Set(index++, partitionObject);
         // Clean up memory
-        // free(partition->device);
-        // free(partition->mount_point);
-        // free(partition->fstype);
-        // free(partition->opts);
+        free(partition->device);
+        free(partition->mount_point);
+        free(partition->fstype);
+        free(partition->opts);
         delete partition;
       }
 
       // Return final object
       return resultsObject;
+    }
+
+    char* copyString(char* string) {
+      char* newString = (char *)malloc(strlen(string) * sizeof(char));
+      strcpy(newString, string);
+      return newString;
     }
 };
 #else
