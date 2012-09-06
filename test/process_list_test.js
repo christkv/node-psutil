@@ -23,9 +23,6 @@ exports['Should correctly fetch process list'] = function(test) {
         test.ok(typeof ppid == 'number');
 
         processes[20].exe(function(err, exe) {
-          test.equal(null, err);
-          test.ok(typeof exe == 'string');
-
           processes[21].cpu_times(function(err, times) {
             test.equal(null, err);
             test.ok(Array.isArray(times));
