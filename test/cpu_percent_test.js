@@ -55,5 +55,5 @@ exports['Should correctly fetch cpu usage percentages on linux'] = function(test
       psUtil.cpu_times = lib_function;
       test.done();
     });
- });
+  });
 }

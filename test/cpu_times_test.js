@@ -66,5 +66,5 @@ exports['Should correctly fetch cpu times on linux'] = function(test) {
       psUtil._lib.sys_conf = lib_function;
       test.done();
     });
- });
+  });
 }
