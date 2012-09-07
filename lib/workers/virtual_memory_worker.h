@@ -26,7 +26,7 @@
 #include "worker.h"
 
 // using namespace v8;
-using namespace node;
+// using namespace node;
 using namespace std;
 
 #ifdef __APPLE__
@@ -104,19 +104,19 @@ class VirtualMemoryWorker : public Worker {
       this->results->percent = ceilf(this->results->percent * 100.0) / 100.0;
     }
 
-    Handle<Value> inline map()
+    v8::Handle<v8::Value> inline map()
     {
       // HandleScope scope;
-      Local<Object> resultsObject = Object::New();
+      v8::Local<v8::Object> resultsObject = v8::Object::New();
       // Map the structure to the final object
-      resultsObject->Set(String::New("total"), Number::New(this->results->total));
-      resultsObject->Set(String::New("active"), Number::New(this->results->active));
-      resultsObject->Set(String::New("inactive"), Number::New(this->results->inactive));
-      resultsObject->Set(String::New("wired"), Number::New(this->results->wired));
-      resultsObject->Set(String::New("free"), Number::New(this->results->free));
-      resultsObject->Set(String::New("available"), Number::New(this->results->available));
-      resultsObject->Set(String::New("used"), Number::New(this->results->used));
-      resultsObject->Set(String::New("percent"), Number::New(this->results->percent));
+      resultsObject->Set(v8::String::New("total"), v8::Number::New(this->results->total));
+      resultsObject->Set(v8::String::New("active"), v8::Number::New(this->results->active));
+      resultsObject->Set(v8::String::New("inactive"), v8::Number::New(this->results->inactive));
+      resultsObject->Set(v8::String::New("wired"), v8::Number::New(this->results->wired));
+      resultsObject->Set(v8::String::New("free"), v8::Number::New(this->results->free));
+      resultsObject->Set(v8::String::New("available"), v8::Number::New(this->results->available));
+      resultsObject->Set(v8::String::New("used"), v8::Number::New(this->results->used));
+      resultsObject->Set(v8::String::New("percent"), v8::Number::New(this->results->percent));
 
       // Cleanup memory
       delete this->results;
@@ -163,17 +163,17 @@ class VirtualMemoryWorker : public Worker {
       this->results->swap_free = (unsigned long long)info.freeswap  * info.mem_unit;
     }
 
-    Handle<Value> inline map()
+    v8::Handle<v8::Value> inline map()
     {
       // HandleScope scope;
-      Local<Object> resultsObject = Object::New();
+      v8::Local<v8::Object> resultsObject = v8::Object::New();
       // Map the structure to the final object
-      resultsObject->Set(String::New("total"), Number::New(this->results->total));
-      resultsObject->Set(String::New("free"), Number::New(this->results->free));
-      resultsObject->Set(String::New("buffer"), Number::New(this->results->buffer));
-      resultsObject->Set(String::New("shared"), Number::New(this->results->shared));
-      resultsObject->Set(String::New("swap_total"), Number::New(this->results->swap_total));
-      resultsObject->Set(String::New("swap_free"), Number::New(this->results->swap_free));
+      resultsObject->Set(v8::String::New("total"), v8::Number::New(this->results->total));
+      resultsObject->Set(v8::String::New("free"), v8::Number::New(this->results->free));
+      resultsObject->Set(v8::String::New("buffer"), v8::Number::New(this->results->buffer));
+      resultsObject->Set(v8::String::New("shared"), v8::Number::New(this->results->shared));
+      resultsObject->Set(v8::String::New("swap_total"), v8::Number::New(this->results->swap_total));
+      resultsObject->Set(v8::String::New("swap_free"), v8::Number::New(this->results->swap_free));
 
       // Cleanup memory
       delete this->results;
@@ -192,10 +192,10 @@ class VirtualMemoryWorker : public Worker {
     {
     }
 
-    Handle<Value> inline map()
+    v8::Handle<v8::Value> inline map()
     {
       // HandleScope scope;
-      Local<Object> resultsObject = Object::New();
+      v8::Local<v8::Object> resultsObject = v8::Object::New();
       // Return final object
       return resultsObject;
     }
