@@ -30,14 +30,14 @@
 // #include "workers/sysconf_worker.h"
 
 #include "psutil_lib_osx.h"
-#include "workers/worker.h"
+// #include "workers/worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
 #endif
 
 // using namespace v8;
-//using namespace node;
+using namespace node;
 
 static v8::Handle<v8::Value> VException(const char *msg)
 {
@@ -47,7 +47,7 @@ static v8::Handle<v8::Value> VException(const char *msg)
 
 v8::Persistent<v8::FunctionTemplate> PSUtilLib::constructor_template;
 
-PSUtilLib::PSUtilLib() : node::ObjectWrap()
+PSUtilLib::PSUtilLib() : ObjectWrap()
 {
 }
 

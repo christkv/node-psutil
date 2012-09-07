@@ -2,11 +2,12 @@
 #define WORKER_H_
 
 #include <v8.h>
+#include <node.h>
 
 class Worker {
   public:
-    Worker() {}
-    virtual ~Worker() {}
+    Worker();
+    virtual ~Worker();
 
     // libuv's request struct.
     uv_work_t request;
