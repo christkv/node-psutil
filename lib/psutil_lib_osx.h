@@ -22,17 +22,17 @@ class PSUtilLib : public ObjectWrap {
     static void Initialize(v8::Handle<v8::Object> target);
 
     // Methods for data collection
-    static v8::Handle<v8::Value> DiskIOCounters(const v8::Arguments& args);
-    static v8::Handle<v8::Value> NetworkIOCounters(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> DiskIOCounters(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> NetworkIOCounters(const v8::Arguments& args);
     static v8::Handle<v8::Value> VirtualMemory(const v8::Arguments& args);
-    static v8::Handle<v8::Value> SwapMemory(const v8::Arguments& args);
-    static v8::Handle<v8::Value> CPUPercent(const v8::Arguments& args);
-    static v8::Handle<v8::Value> PidList(const v8::Arguments& args);
-    static v8::Handle<v8::Value> PidExists(const v8::Arguments& args);
-    static v8::Handle<v8::Value> ProcessInfo(const v8::Arguments& args);
-    static v8::Handle<v8::Value> DiskPartitions(const v8::Arguments& args);
-    static v8::Handle<v8::Value> DiskUsage(const v8::Arguments& args);
-    static v8::Handle<v8::Value> SysConf(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> SwapMemory(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> CPUPercent(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> PidList(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> PidExists(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> ProcessInfo(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> DiskPartitions(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> DiskUsage(const v8::Arguments& args);
+    // static v8::Handle<v8::Value> SysConf(const v8::Arguments& args);
 
     // Handles the uv calls
     static void Process(uv_work_t* work_req);
