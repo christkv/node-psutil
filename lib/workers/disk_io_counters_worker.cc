@@ -134,10 +134,10 @@ void DiskIOCountersWorker::execute()
   }
 }
 
-Handle<Value> DiskIOCountersWorker::map()
+v8::Handle<v8::Value> DiskIOCountersWorker::map()
 {
   // HandleScope scope;
-  Local<Object> resultsObject = Object::New();
+  v8::Local<v8::Object> resultsObject = v8::Object::New();
 
   // If not pr disk accumulate all the data
   if(!prDisk) {
@@ -162,12 +162,12 @@ Handle<Value> DiskIOCountersWorker::map()
     }
 
     // Set values
-    resultsObject->Set(String::New("read_count"), Number::New(reads));
-    resultsObject->Set(String::New("write_count"), Number::New(writes));
-    resultsObject->Set(String::New("read_bytes"), Number::New(read_bytes));
-    resultsObject->Set(String::New("write_bytes"), Number::New(write_bytes));
-    resultsObject->Set(String::New("read_time"), Number::New(read_time));
-    resultsObject->Set(String::New("write_time"), Number::New(write_time));
+    resultsObject->Set(v8::String::New("read_count"), v8::Number::New(reads));
+    resultsObject->Set(v8::String::New("write_count"), v8::Number::New(writes));
+    resultsObject->Set(v8::String::New("read_bytes"), v8::Number::New(read_bytes));
+    resultsObject->Set(v8::String::New("write_bytes"), v8::Number::New(write_bytes));
+    resultsObject->Set(v8::String::New("read_time"), v8::Number::New(read_time));
+    resultsObject->Set(v8::String::New("write_time"), v8::Number::New(write_time));
   } else {
     vector<DiskCounters*>::const_iterator i;
 
@@ -175,16 +175,16 @@ Handle<Value> DiskIOCountersWorker::map()
       // Reference the diskCounters
       DiskCounters *diskCounters = *i;
       // DiskObject
-      Local<Object> diskObject = Object::New();
-      diskObject->Set(String::New("read_count"), Number::New(diskCounters->reads));
-      diskObject->Set(String::New("write_count"), Number::New(diskCounters->writes));
-      diskObject->Set(String::New("read_bytes"), Number::New(diskCounters->read_bytes));
-      diskObject->Set(String::New("write_bytes"), Number::New(diskCounters->write_bytes));
-      diskObject->Set(String::New("read_time"), Number::New(diskCounters->read_time));
-      diskObject->Set(String::New("write_time"), Number::New(diskCounters->write_time));
+      v8::Local<v8::Object> diskObject = v8::Object::New();
+      diskObject->Set(v8::String::New("read_count"), v8::Number::New(diskCounters->reads));
+      diskObject->Set(v8::String::New("write_count"), v8::Number::New(diskCounters->writes));
+      diskObject->Set(v8::String::New("read_bytes"), v8::Number::New(diskCounters->read_bytes));
+      diskObject->Set(v8::String::New("write_bytes"), v8::Number::New(diskCounters->write_bytes));
+      diskObject->Set(v8::String::New("read_time"), v8::Number::New(diskCounters->read_time));
+      diskObject->Set(v8::String::New("write_time"), v8::Number::New(diskCounters->write_time));
 
       // Add to the result object
-      resultsObject->Set(String::New(diskCounters->disk_name, strlen(diskCounters->disk_name)), diskObject);
+      resultsObject->Set(v8::String::New(diskCounters->disk_name, strlen(diskCounters->disk_name)), diskObject);
       // Clean up memory
       free(diskCounters->disk_name);
       delete diskCounters;
@@ -195,6 +195,6 @@ Handle<Value> DiskIOCountersWorker::map()
 }
 #else
   void DiskIOCountersWorker::execute() {}
-  Handle<Value> DiskIOCountersWorker::map() { return Undefined(); }
+  v8::Handle<v8::Value> DiskIOCountersWorker::map() { return v8::Undefined(); }
 };
 #endif

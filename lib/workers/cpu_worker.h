@@ -25,7 +25,7 @@ class CPUWorker : public Worker {
     vector<CPUStatistics*> results;
 
     void execute();
-    Handle<Value> map();
+    v8::Handle<v8::Value> map();
 };
 
 #endif  // CPU_WORKER_H_

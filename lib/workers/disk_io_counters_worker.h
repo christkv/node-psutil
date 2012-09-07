@@ -5,8 +5,6 @@
 #include <vector>
 #include "worker.h"
 
-// using namespace v8;
-using namespace node;
 using namespace std;
 
 // Data struct
@@ -29,7 +27,7 @@ class DiskIOCountersWorker : public Worker {
     vector<DiskCounters*> results;
 
     void execute();
-    Handle<Value> map();
+    v8::Handle<v8::Value> map();
 };
 
 #endif  // DISK_IO_COUNTERS_WORKER_H_

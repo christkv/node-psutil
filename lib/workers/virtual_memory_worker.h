@@ -29,7 +29,7 @@ class VirtualMemoryWorker : public Worker {
     VirtualMemory *results;
 
     void execute();
-    Handle<Value> map();
+    v8::Handle<v8::Value> map();
 };
 
 #endif  // VIRTUAL_MEMORY_WORKER_H_

@@ -86,16 +86,16 @@ void VirtualMemoryWorker::execute()
 v8::Handle<v8::Value> VirtualMemoryWorker::map()
 {
   // HandleScope scope;
-  Local<Object> resultsObject = Object::New();
+  v8::Local<v8::Object> resultsObject = v8::Object::New();
   // Map the structure to the final object
-  resultsObject->Set(String::New("total"), Number::New(this->results->total));
-  resultsObject->Set(String::New("active"), Number::New(this->results->active));
-  resultsObject->Set(String::New("inactive"), Number::New(this->results->inactive));
-  resultsObject->Set(String::New("wired"), Number::New(this->results->wired));
-  resultsObject->Set(String::New("free"), Number::New(this->results->free));
-  resultsObject->Set(String::New("available"), Number::New(this->results->available));
-  resultsObject->Set(String::New("used"), Number::New(this->results->used));
-  resultsObject->Set(String::New("percent"), Number::New(this->results->percent));
+  resultsObject->Set(v8::String::New("total"), v8::Number::New(this->results->total));
+  resultsObject->Set(v8::String::New("active"), v8::Number::New(this->results->active));
+  resultsObject->Set(v8::String::New("inactive"), v8::Number::New(this->results->inactive));
+  resultsObject->Set(v8::String::New("wired"), v8::Number::New(this->results->wired));
+  resultsObject->Set(v8::String::New("free"), v8::Number::New(this->results->free));
+  resultsObject->Set(v8::String::New("available"), v8::Number::New(this->results->available));
+  resultsObject->Set(v8::String::New("used"), v8::Number::New(this->results->used));
+  resultsObject->Set(v8::String::New("percent"), v8::Number::New(this->results->percent));
 
   // Cleanup memory
   delete this->results;

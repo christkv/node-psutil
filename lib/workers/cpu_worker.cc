@@ -93,13 +93,13 @@ void CPUWorker::execute()
   }
 }
 
-Handle<Value> CPUWorker::map()
+v8::Handle<v8::Value> CPUWorker::map()
 {
   // If not pr disk accumulate all the data
   if(!this->perCPU) {
     vector<CPUStatistics*>::const_iterator i;
     // HandleScope scope;
-    Local<Object> resultsObject = Object::New();
+    v8::Local<v8::Object> resultsObject = v8::Object::New();
 
     // All accumulators
     double user, nice, system, idle;
@@ -117,16 +117,16 @@ Handle<Value> CPUWorker::map()
     }
 
     // Set values
-    resultsObject->Set(String::New("user"), Number::New(round(user)));
-    resultsObject->Set(String::New("nice"), Number::New(round(nice)));
-    resultsObject->Set(String::New("system"), Number::New(round(system)));
-    resultsObject->Set(String::New("idle"), Number::New(round(idle)));
+    resultsObject->Set(v8::String::New("user"), v8::Number::New(round(user)));
+    resultsObject->Set(v8::String::New("nice"), v8::Number::New(round(nice)));
+    resultsObject->Set(v8::String::New("system"), v8::Number::New(round(system)));
+    resultsObject->Set(v8::String::New("idle"), v8::Number::New(round(idle)));
     // Return final object
     return resultsObject;
   } else {
     vector<CPUStatistics*>::const_iterator i;
     // HandleScope scope;
-    Local<Array> resultsObject = Array::New(this->results.size());
+    v8::Local<v8::Array> resultsObject = v8::Array::New(this->results.size());
     // Just an array pointer
     int index = 0;
 
@@ -134,11 +134,11 @@ Handle<Value> CPUWorker::map()
       // Reference the diskCounters
       CPUStatistics *cpuStatistics = *i;
       // DiskObject
-      Local<Object> result = Object::New();
-      result->Set(String::New("user"), Number::New(round(cpuStatistics->user)));
-      result->Set(String::New("nice"), Number::New(round(cpuStatistics->nice)));
-      result->Set(String::New("system"), Number::New(round(cpuStatistics->system)));
-      result->Set(String::New("idle"), Number::New(round(cpuStatistics->idle)));
+      v8::Local<v8::Object> result = v8::Object::New();
+      result->Set(v8::String::New("user"), v8::Number::New(round(cpuStatistics->user)));
+      result->Set(v8::String::New("nice"), v8::Number::New(round(cpuStatistics->nice)));
+      result->Set(v8::String::New("system"), v8::Number::New(round(cpuStatistics->system)));
+      result->Set(v8::String::New("idle"), v8::Number::New(round(cpuStatistics->idle)));
 
       // Add to the result object
       resultsObject->Set(index++, result);
@@ -151,5 +151,5 @@ Handle<Value> CPUWorker::map()
 }
 #else
 void CPUWorker::execute() {}
-Handle<Value> CPUWorker::map() { return Undefined(); }
+v8::Handle<v8::Value> CPUWorker::map() { return v8::Undefined(); }
 #endif
