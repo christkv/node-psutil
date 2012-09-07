@@ -22,7 +22,7 @@ class PSUtilLib : public ObjectWrap {
     static void Initialize(v8::Handle<v8::Object> target);
 
     // Methods for data collection
-    // static v8::Handle<v8::Value> DiskIOCounters(const v8::Arguments& args);
+    static v8::Handle<v8::Value> DiskIOCounters(const v8::Arguments& args);
     // static v8::Handle<v8::Value> NetworkIOCounters(const v8::Arguments& args);
     static v8::Handle<v8::Value> VirtualMemory(const v8::Arguments& args);
     // static v8::Handle<v8::Value> SwapMemory(const v8::Arguments& args);

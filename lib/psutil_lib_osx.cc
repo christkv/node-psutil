@@ -17,7 +17,7 @@
 #include <limits>
 #include <vector>
 
-// #include "workers/disk_io_counters_worker.h"
+#include "workers/disk_io_counters_worker.h"
 // #include "workers/network_io_counters_worker.h"
 #include "workers/virtual_memory_worker.h"
 // #include "workers/swap_memory_worker.h"
@@ -65,7 +65,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Set up the iostat command
-  // NODE_SET_PROTOTYPE_METHOD(t, "disk_io_counters", PSUtilLib::DiskIOCounters);
+  NODE_SET_PROTOTYPE_METHOD(t, "disk_io_counters", PSUtilLib::DiskIOCounters);
   // NODE_SET_PROTOTYPE_METHOD(t, "network_io_counters", PSUtilLib::NetworkIOCounters);
   NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
   // NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
@@ -104,28 +104,28 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
 //   return Undefined();
 // }
 
-// Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::DiskIOCounters(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
-//   if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
-//   // Get the callback
-//   Local<Function> callback;
-//   // If we have a single parameter
-//   callback = args.Length() == 1 ? Local<Function>::Cast(args[0]) : Local<Function>::Cast(args[1]);
-//   // Create a worker object and map the information
-//   DiskIOCountersWorker *worker = new DiskIOCountersWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
-//   // Get the value of results being returned
-//   worker->prDisk = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Legal modes
+  if(args.Length() == 2 && args[0]->IsBoolean() == false && args[1]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
+  if(args.Length() == 1 && args[0]->IsFunction() == false) return VException("function requires [boolean, function] or [function]");
+  // Get the callback
+  Local<Function> callback;
+  // If we have a single parameter
+  callback = args.Length() == 1 ? Local<Function>::Cast(args[0]) : Local<Function>::Cast(args[1]);
+  // Create a worker object and map the information
+  DiskIOCountersWorker *worker = new DiskIOCountersWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
+  // Get the value of results being returned
+  worker->prDisk = args.Length() == 2 ? args[1]->ToBoolean()->BooleanValue() : false;
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
   HandleScope scope;

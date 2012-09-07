@@ -10,7 +10,8 @@
         'lib/workers/worker.cc',
         'lib/workers/virtual_memory_worker.cc',
         'lib/workers/cpu_worker.cc',
-        'lib/workers/sysconf_worker.cc'
+        'lib/workers/sysconf_worker.cc',
+        'lib/workers/disk_io_counters_worker.cc'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
