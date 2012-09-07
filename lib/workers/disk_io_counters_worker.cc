@@ -196,5 +196,4 @@ v8::Handle<v8::Value> DiskIOCountersWorker::map()
 #else
   void DiskIOCountersWorker::execute() {}
   v8::Handle<v8::Value> DiskIOCountersWorker::map() { return v8::Undefined(); }
-};
 #endif
