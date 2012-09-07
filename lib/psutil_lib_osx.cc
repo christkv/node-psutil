@@ -21,7 +21,7 @@
 // #include "workers/network_io_counters_worker.h"
 #include "workers/virtual_memory_worker.h"
 // #include "workers/swap_memory_worker.h"
-// #include "workers/cpu_worker.h"
+#include "workers/cpu_worker.h"
 // #include "workers/pid_list_worker.h"
 // #include "workers/pid_exists_worker.h"
 // #include "workers/disk_partitions_worker.h"
@@ -70,7 +70,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   // NODE_SET_PROTOTYPE_METHOD(t, "network_io_counters", PSUtilLib::NetworkIOCounters);
   NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
   // NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
-  // NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
+  NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
   // NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
   // NODE_SET_PROTOTYPE_METHOD(t, "pid_exists", PSUtilLib::PidExists);
   // NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
@@ -169,25 +169,25 @@ Handle<Value> PSUtilLib::VirtualMemory(const Arguments& args) {
 // }
 
 
-// Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 2 && !args[0]->IsBoolean() && !args[1]->IsFunction()) return VException("function requires [boolean, function] or [function]");
-//   // Get the callback
-//   Local<Function> callback = Local<Function>::Cast(args[1]);
-//   // Create a worker object and map the information
-//   CPUWorker *worker = new CPUWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
-//   // Set parameters
-//   worker->perCPU = args[0]->ToBoolean()->BooleanValue();
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Legal modes
+  if(args.Length() == 2 && !args[0]->IsBoolean() && !args[1]->IsFunction()) return VException("function requires [boolean, function] or [function]");
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[1]);
+  // Create a worker object and map the information
+  CPUWorker *worker = new CPUWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
+  // Set parameters
+  worker->perCPU = args[0]->ToBoolean()->BooleanValue();
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 // Handle<Value> PSUtilLib::PidList(const Arguments& args) {
 //   HandleScope scope;

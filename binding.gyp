@@ -5,10 +5,11 @@
   'targets': [
     {
       'target_name': 'psutil_lib_osx',
-      'sources': [ 
+      'sources': [
         'lib/psutil_lib_osx.cc',
         'lib/workers/worker.cc',
-        'lib/workers/virtual_memory_worker.cc'
+        'lib/workers/virtual_memory_worker.cc',
+        'lib/workers/cpu_worker.cc'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],

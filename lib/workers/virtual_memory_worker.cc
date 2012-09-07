@@ -1,6 +1,28 @@
 #include "virtual_memory_worker.h"
 
-VirtualMemoryWorker::VirtualMemoryWorker() { 
+#ifdef __APPLE__
+  #include <mach/mach.h>
+  #include <mach/task.h>
+  #include <mach/mach_init.h>
+  #include <mach/host_info.h>
+  #include <mach/mach_host.h>
+  #include <mach/mach_traps.h>
+  #include <mach/mach_vm.h>
+  #include <mach/shared_region.h>
+  #include <sys/sysctl.h>
+  #include <math.h>
+  #include <unistd.h>
+  #include <errno.h>
+#elif defined __linux__
+  #include <sys/sysinfo.h>
+  #include <string.h>
+  #include <errno.h>
+#elif defined _WIN32 || defined _WIN64
+#else
+#error "unknown platform"
+#endif
+
+VirtualMemoryWorker::VirtualMemoryWorker() {
 }
 
 VirtualMemoryWorker::~VirtualMemoryWorker() {
