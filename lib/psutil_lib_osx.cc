@@ -27,10 +27,9 @@
 // #include "workers/disk_partitions_worker.h"
 // #include "workers/disk_usage_worker.h"
 // #include "workers/process_worker.h"
-// #include "workers/sysconf_worker.h"
+#include "workers/sysconf_worker.h"
 
 #include "psutil_lib_osx.h"
-// #include "workers/worker.h"
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
@@ -76,7 +75,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   // NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
   // NODE_SET_PROTOTYPE_METHOD(t, "disk_partitions", PSUtilLib::DiskPartitions);
   // NODE_SET_PROTOTYPE_METHOD(t, "disk_usage", PSUtilLib::DiskUsage);
-  // NODE_SET_PROTOTYPE_METHOD(t, "sys_conf", PSUtilLib::SysConf);
+  NODE_SET_PROTOTYPE_METHOD(t, "sys_conf", PSUtilLib::SysConf);
 
   // Set the name of the class
   target->ForceSet(String::NewSymbol("PSUtilLib"), constructor_template->GetFunction());
@@ -301,29 +300,29 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
 //   return Undefined();
 // }
 
-// Handle<Value> PSUtilLib::SysConf(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::SysConf(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 2 && !args[0]->IsUint32() && !args[1]->IsFunction()) return VException("function requires [int, function]");
+  // Legal modes
+  if(args.Length() == 2 && !args[0]->IsUint32() && !args[1]->IsFunction()) return VException("function requires [int, function]");
 
-//   // Get the callback
-//   Local<Function> callback = Local<Function>::Cast(args[1]);
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[1]);
 
-//   // Create a worker object and map the information
-//   SysconfWorker *worker = new SysconfWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
+  // Create a worker object and map the information
+  SysconfWorker *worker = new SysconfWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
 
-//   // Set value
-//   worker->name = args[0]->ToUint32()->Value();
+  // Set value
+  worker->name = args[0]->ToUint32()->Value();
 
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 void PSUtilLib::Process(uv_work_t* work_req) {
   // Grab the worker
