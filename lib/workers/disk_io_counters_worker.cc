@@ -196,5 +196,4 @@ Handle<Value> DiskIOCountersWorker::map()
 #else
   void DiskIOCountersWorker::execute() {}
   Handle<Value> DiskIOCountersWorker::map() { return Undefined(); }
-};
 #endif
