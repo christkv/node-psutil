@@ -2,15 +2,9 @@
   #include <sys/mount.h>
   #include <errno.h>
 #elif defined __linux__
-  //#include <devstat.h>      /* get io counters */
   #include <errno.h>
-  // #include <stdlib.h>
-  // #include <mntent.h>
-  // #include <utmp.h>
-  // #include <sched.h>
-  // #include <sys/syscall.h>
-  // #include <sys/sysinfo.h>
-  #include <linux/unistd.h>
+  #include <stdlib.h>
+  #include <mntent.h>
 #elif defined _WIN32 || defined _WIN64
 #else
 #error "unknown platform"
@@ -189,10 +183,10 @@ void DiskPartitionsWorker::execute()
   endmntent(file);
 }
 
-Handle<Value> DiskPartitionsWorker::map()
+v8::Handle<v8::Value> DiskPartitionsWorker::map()
 {
   // HandleScope scope;
-  Local<Object> resultsObject = Array::New(this->results.size());
+  v8::Local<v8::Object> resultsObject = v8::Array::New(this->results.size());
   vector<DiskPartition*>::const_iterator i;
   int index = 0;
 
@@ -201,11 +195,11 @@ Handle<Value> DiskPartitionsWorker::map()
     DiskPartition *partition = *i;
 
     // DiskObject
-    Local<Object> partitionObject = Object::New();
-    partitionObject->Set(String::New("device"), String::New(partition->device));
-    partitionObject->Set(String::New("mountpoint"), String::New(partition->mount_point));
-    partitionObject->Set(String::New("fstype"), String::New(partition->fstype));
-    partitionObject->Set(String::New("opts"), String::New(partition->opts));
+    v8::Local<v8::Object> partitionObject = v8::Object::New();
+    partitionObject->Set(v8::String::New("device"), v8::String::New(partition->device));
+    partitionObject->Set(v8::String::New("mountpoint"), v8::String::New(partition->mount_point));
+    partitionObject->Set(v8::String::New("fstype"), v8::String::New(partition->fstype));
+    partitionObject->Set(v8::String::New("opts"), v8::String::New(partition->opts));
     // Add to the result object
     resultsObject->Set(index++, partitionObject);
     // Clean up memory
@@ -229,8 +223,8 @@ char* DiskPartitionsWorker::copyString(char* string) {
 #else
   void DiskPartitionsWorker::execute() {}
 
-  Handle<Value> DiskPartitionsWorker::map() {
-    return Undefined();
+  v8::Handle<v8::Value> DiskPartitionsWorker::map() {
+    return v8::Undefined();
   }
 
   char* DiskPartitionsWorker::copyString(char* string) {
