@@ -5,6 +5,10 @@
 #include <errno.h>
 #include <math.h>
 
+#ifdef __linux__
+  #include <stdlib.h>
+#endif
+
 using namespace std;
 
 DiskUsageWorker::DiskUsageWorker() {}

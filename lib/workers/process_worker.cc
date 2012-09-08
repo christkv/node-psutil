@@ -218,6 +218,6 @@ v8::Handle<v8::Value> ProcessWorker::map()
 }
 
 #else
-void ProcessWorker::execute();
+void ProcessWorker::execute() {}
 v8::Handle<v8::Value> ProcessWorker::map() { return v8::Undefined(); }
 #endif
