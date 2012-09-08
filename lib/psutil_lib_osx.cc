@@ -16,7 +16,7 @@
 #include "workers/pid_exists_worker.h"
 #include "workers/disk_partitions_worker.h"
 #include "workers/disk_usage_worker.h"
-// #include "workers/process_worker.h"
+#include "workers/process_worker.h"
 #include "workers/sysconf_worker.h"
 
 #include "psutil_lib_osx.h"
@@ -62,7 +62,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
   NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
   NODE_SET_PROTOTYPE_METHOD(t, "pid_exists", PSUtilLib::PidExists);
-  // NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
+  NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_partitions", PSUtilLib::DiskPartitions);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_usage", PSUtilLib::DiskUsage);
   NODE_SET_PROTOTYPE_METHOD(t, "sys_conf", PSUtilLib::SysConf);
@@ -215,31 +215,31 @@ Handle<Value> PSUtilLib::PidExists(const Arguments& args) {
   return Undefined();
 }
 
-// Handle<Value> PSUtilLib::ProcessInfo(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::ProcessInfo(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 4 && !args[0]->IsNumber() && !args[1]->IsNumber() && !args[2]->IsObject() && !args[3]->IsFunction()) return VException("function requires [number, number, object, function]");
+  // Legal modes
+  if(args.Length() == 4 && !args[0]->IsNumber() && !args[1]->IsNumber() && !args[2]->IsObject() && !args[3]->IsFunction()) return VException("function requires [number, number, object, function]");
 
-//   // Get the callback
-//   Local<Function> callback = Local<Function>::Cast(args[3]);
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[3]);
 
-//   // Create a worker object and map the information
-//   ProcessWorker *worker = new ProcessWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
+  // Create a worker object and map the information
+  ProcessWorker *worker = new ProcessWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
 
-//   // Set all data for the worker
-//   worker->pid = args[0]->ToNumber()->Value();
-//   worker->operation = args[1]->ToUint32()->Value();
-//   worker->parameters = Persistent<Object>::New(args[2]->ToObject());
+  // Set all data for the worker
+  worker->pid = args[0]->ToNumber()->Value();
+  worker->operation = args[1]->ToUint32()->Value();
+  worker->parameters = Persistent<Object>::New(args[2]->ToObject());
 
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 v8::Handle<v8::Value> PSUtilLib::DiskPartitions(const v8::Arguments& args) {
   v8::HandleScope scope;
