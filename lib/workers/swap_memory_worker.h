@@ -4,8 +4,6 @@
 #include <v8.h>
 #include "worker.h"
 
-using namespace std;
-
 // Data struct
 struct SwapMemory {
   uint64_t total;

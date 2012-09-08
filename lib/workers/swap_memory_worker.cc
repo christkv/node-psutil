@@ -23,8 +23,6 @@
 
 #include "swap_memory_worker.h"
 
-using namespace std;
-
 SwapMemoryWorker::SwapMemoryWorker() {}
 SwapMemoryWorker::~SwapMemoryWorker() {}
 
