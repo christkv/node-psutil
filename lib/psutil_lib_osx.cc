@@ -15,7 +15,7 @@
 #include "workers/pid_list_worker.h"
 // #include "workers/pid_exists_worker.h"
 #include "workers/disk_partitions_worker.h"
-// #include "workers/disk_usage_worker.h"
+#include "workers/disk_usage_worker.h"
 // #include "workers/process_worker.h"
 #include "workers/sysconf_worker.h"
 
@@ -64,7 +64,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   // NODE_SET_PROTOTYPE_METHOD(t, "pid_exists", PSUtilLib::PidExists);
   // NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_partitions", PSUtilLib::DiskPartitions);
-  // NODE_SET_PROTOTYPE_METHOD(t, "disk_usage", PSUtilLib::DiskUsage);
+  NODE_SET_PROTOTYPE_METHOD(t, "disk_usage", PSUtilLib::DiskUsage);
   NODE_SET_PROTOTYPE_METHOD(t, "sys_conf", PSUtilLib::SysConf);
 
   // Set the name of the class
@@ -262,32 +262,32 @@ v8::Handle<v8::Value> PSUtilLib::DiskPartitions(const v8::Arguments& args) {
   return v8::Undefined();
 }
 
-// Handle<Value> PSUtilLib::DiskUsage(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::DiskUsage(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 2 && !args[0]->IsString() && !args[1]->IsFunction()) return VException("function requires [string, function]");
+  // Legal modes
+  if(args.Length() == 2 && !args[0]->IsString() && !args[1]->IsFunction()) return VException("function requires [string, function]");
 
-//   // Get the callback
-//   Local<Function> callback = Local<Function>::Cast(args[1]);
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[1]);
 
-//   // Create a worker object and map the information
-//   DiskUsageWorker *worker = new DiskUsageWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
+  // Create a worker object and map the information
+  DiskUsageWorker *worker = new DiskUsageWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
 
-//   // Set the path
-//   worker->path = (char *)malloc(sizeof(char) * (args[0]->ToString()->Utf8Length() + 1));
-//   // Write the string
-//   args[0]->ToString()->WriteUtf8(worker->path);
-//   // worker->path = args[0]->ToString()->c_str();
+  // Set the path
+  worker->path = (char *)malloc(sizeof(char) * (args[0]->ToString()->Utf8Length() + 1));
+  // Write the string
+  args[0]->ToString()->WriteUtf8(worker->path);
+  // worker->path = args[0]->ToString()->c_str();
 
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 Handle<Value> PSUtilLib::SysConf(const Arguments& args) {
   HandleScope scope;
