@@ -5,9 +5,6 @@
   #include <errno.h>
   #include <stdlib.h>
   #include <mntent.h>
-#elif defined _WIN32 || defined _WIN64
-#else
-#error "unknown platform"
 #endif
 
 #include "disk_partitions_worker.h"
