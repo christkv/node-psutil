@@ -26,6 +26,5 @@ class DiskPartitionsWorker : public Worker {
 
     void execute();
     v8::Handle<v8::Value> map();
-    char* copyString(char* string);
 };
 #endif  // DISK_PARTITIONS_WORKER_H_

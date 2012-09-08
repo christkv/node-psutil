@@ -97,5 +97,5 @@ v8::Handle<v8::Value> SwapMemoryWorker::map()
 }
 #else
 void SwapMemoryWorker::execute() {}
-v8::Handle<v8::Value> SwapMemoryWorker::map();
+v8::Handle<v8::Value> SwapMemoryWorker::map() { return v8::Undefined(); }
 #endif

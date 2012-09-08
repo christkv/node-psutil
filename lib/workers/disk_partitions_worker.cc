@@ -145,9 +145,13 @@ v8::Handle<v8::Value> DiskPartitionsWorker::map()
   // Return final object
   return resultsObject;
 }
-
-char* DiskPartitionsWorker::copyString(char* string) { return NULL; }
 #elif defined __linux__
+char* copyString(char* string) {
+  char* newString = (char *)malloc(strlen(string) * sizeof(char));
+  strcpy(newString, string);
+  return newString;
+}
+
 void DiskPartitionsWorker::execute()
 {
   FILE *file = NULL;
@@ -211,20 +215,7 @@ v8::Handle<v8::Value> DiskPartitionsWorker::map()
   return resultsObject;
 }
 
-char* DiskPartitionsWorker::copyString(char* string) {
-  char* newString = (char *)malloc(strlen(string) * sizeof(char));
-  strcpy(newString, string);
-  return newString;
-}
-
 #else
   void DiskPartitionsWorker::execute() {}
-
-  v8::Handle<v8::Value> DiskPartitionsWorker::map() {
-    return v8::Undefined();
-  }
-
-  char* DiskPartitionsWorker::copyString(char* string) {
-    return NULL;
-  }
+  v8::Handle<v8::Value> DiskPartitionsWorker::map() { return v8::Undefined(); }
 #endif

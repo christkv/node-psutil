@@ -12,7 +12,7 @@
 #include "workers/virtual_memory_worker.h"
 #include "workers/swap_memory_worker.h"
 #include "workers/cpu_worker.h"
-// #include "workers/pid_list_worker.h"
+#include "workers/pid_list_worker.h"
 // #include "workers/pid_exists_worker.h"
 #include "workers/disk_partitions_worker.h"
 // #include "workers/disk_usage_worker.h"
@@ -60,7 +60,7 @@ void PSUtilLib::Initialize(v8::Handle<v8::Object> target)
   NODE_SET_PROTOTYPE_METHOD(t, "virtual_memory", PSUtilLib::VirtualMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "swap_memory", PSUtilLib::SwapMemory);
   NODE_SET_PROTOTYPE_METHOD(t, "cpu_times", PSUtilLib::CPUPercent);
-  // NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
+  NODE_SET_PROTOTYPE_METHOD(t, "pid_list", PSUtilLib::PidList);
   // NODE_SET_PROTOTYPE_METHOD(t, "pid_exists", PSUtilLib::PidExists);
   // NODE_SET_PROTOTYPE_METHOD(t, "process_info", PSUtilLib::ProcessInfo);
   NODE_SET_PROTOTYPE_METHOD(t, "disk_partitions", PSUtilLib::DiskPartitions);
@@ -177,23 +177,23 @@ Handle<Value> PSUtilLib::CPUPercent(const Arguments& args) {
   return Undefined();
 }
 
-// Handle<Value> PSUtilLib::PidList(const Arguments& args) {
-//   HandleScope scope;
+Handle<Value> PSUtilLib::PidList(const Arguments& args) {
+  HandleScope scope;
 
-//   // Legal modes
-//   if(args.Length() == 1 && !args[0]->IsFunction()) return VException("function requires [function]");
-//   // Get the callback
-//   Local<Function> callback = Local<Function>::Cast(args[0]);
-//   // Create a worker object and map the information
-//   PidListWorker *worker = new PidListWorker();
-//   worker->error = false;
-//   worker->request.data = worker;
-//   worker->callback = Persistent<Function>::New(callback);
-//   // Trigger the work
-//   uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
-//   // Return the handle to the instance
-//   return Undefined();
-// }
+  // Legal modes
+  if(args.Length() == 1 && !args[0]->IsFunction()) return VException("function requires [function]");
+  // Get the callback
+  Local<Function> callback = Local<Function>::Cast(args[0]);
+  // Create a worker object and map the information
+  PidListWorker *worker = new PidListWorker();
+  worker->error = false;
+  worker->request.data = worker;
+  worker->callback = Persistent<Function>::New(callback);
+  // Trigger the work
+  uv_queue_work(uv_default_loop(), &worker->request, PSUtilLib::Process, PSUtilLib::After);
+  // Return the handle to the instance
+  return Undefined();
+}
 
 // Handle<Value> PSUtilLib::PidExists(const Arguments& args) {
 //   HandleScope scope;
