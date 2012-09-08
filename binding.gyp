@@ -16,7 +16,8 @@
         'lib/workers/network_io_counters_worker.cc',
         'lib/workers/swap_memory_worker.cc',
         'lib/workers/pid_list_worker.cc',
-        'lib/workers/disk_usage_worker.cc'
+        'lib/workers/disk_usage_worker.cc',
+        'lib/workers/pid_exists_worker.cc'
       ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
