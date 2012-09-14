@@ -70,8 +70,13 @@ void ProcessWorker::process_exe()
       return;
     }
   }
+
+  // Make a copy of the data
+  char *copy = (char *)malloc(sizeof(char) * PATH_MAX);
+  strncpy(copy, (char *)&buf, PATH_MAX);
+
   // Return the handle
-  this->char_data = (char *)&buf;
+  this->char_data = copy;
 }
 
 void ProcessWorker::process_name()
@@ -210,6 +215,7 @@ v8::Handle<v8::Value> ProcessWorker::map()
     result = Number::New(this->long_data);
   } else if(this->operation == PSUTIL_EXE) {
     result = String::New((char*)this->char_data);
+    free(this->char_data);
   } else if(this->operation == PSUTIL_CPU_TIMES) {
     Local<Array> values = Array::New(2);
     values->Set(0, Number::New(this->float_data[0]));
