@@ -1,6 +1,6 @@
 {
   "name": "psutil",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Node psutil library",
   "main": "index.js",
   "scripts": {
