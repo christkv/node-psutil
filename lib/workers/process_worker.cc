@@ -83,6 +83,11 @@ void ProcessWorker::process_name()
     this->error_message = (char *)"Unable to get the process's information or no such process.";
     return;
   }
+
+  // Make a copy of the data
+  char *copy = (char *)malloc(sizeof(char) * 12);
+  strncpy(copy, kp.kp_proc.p_comm, 12);
+
   // Return the handle
   this->char_data = kp.kp_proc.p_comm;
 }
