@@ -89,7 +89,7 @@ void ProcessWorker::process_name()
   strncpy(copy, kp.kp_proc.p_comm, 12);
 
   // Return the handle
-  this->char_data = kp.kp_proc.p_comm;
+  this->char_data = copy;
 }
 
 void ProcessWorker::process_ppid()
@@ -205,6 +205,7 @@ v8::Handle<v8::Value> ProcessWorker::map()
 
   if(this->operation == PSUTIL_NAME) {
     result = String::New((char*)this->char_data);
+    free(this->char_data);
   } else if(this->operation == PSUTIL_PPID) {
     result = Number::New(this->long_data);
   } else if(this->operation == PSUTIL_EXE) {
