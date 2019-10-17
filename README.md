@@ -1,7 +1,7 @@
 node-psutil
 ===========
 
-The start of a port of the pyhton library psutil.
+The start of a port of the python library psutil.
 
 Usage
 =====
